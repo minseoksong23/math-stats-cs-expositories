@@ -77,10 +77,9 @@ $x^*$ is a solution of this problem and the strong duality holds if and only if 
 \item $\lambda^T f_i(x)=0$ is called complemtary slackness. The term complementary
  comes from the idea of either or that, and slackness means "leftover." This condition is
   hard to verify in practice.
-\item This is a fairly constraint condition. If the strong duality condition does not hold, then
+\item Cavet: if the strong duality condition does not hold, then
 KKT condition might not hold. Further, of course, by no means do we have existence and uniqueness.
-\item There are lots of variants including nonlinear one, one of which is
- given below.
+\item Some of variants exist, one of which includes when $f$ is not convex, given below.
 \end{itemize}
 \begin{lemma}
 Consider now the equality constrained problem, adding the condition\\
@@ -103,7 +102,7 @@ It follows by observing that $\nabla f(x)+\sum_{i=1}^p\nu_i\nabla h_i(x)=0.$ By 
  we also have a uniqueness.
 \end{proof}
 \begin{theorem}
-Assume further that we have continuously differentiable functions $g_i(x)\leq,i=1,2,\dots,m$.\\
+Assume further that we have continuously differentiable functions $g_i(x)\leq 0,i=1,2,\dots,m$.\\
 Let us assume that the vector set composed of $\nabla h_i(x)$ and the gradients of all active inequality constraints
  form a linear independent set. At $x^*$, the KKT condition holds.
 \end{theorem}
@@ -114,7 +113,7 @@ Let us assume that the vector set composed of $\nabla h_i(x)$ and the gradients 
 \end{remark}
 \begin{proof}
 \begin{enumerate}
-\item We are enough to show for the case $g_i$'s are all active at $x^*$, because
+\item It is enough to show for the case $g_i$'s are all active at $x^*$, because
  $\mu_i=0$ whenever $g_i\neq 0$ since $\mu_i\geq 0$ (otherwise we do not have minimum at $x^*$).
 \item Since $g_i\leq 0$, we can also assume that inequality is equality, 
 and use the previous theorem to show the existence of Lagrangian constants that satisfy $\nabla L=\nabla_x f(x^*)+\sum^m_{i=1}\mu_i\nabla_x g_i(x^*)+\sum^p_{i=1}\nu_i\nabla_x h_i(x^*)=0$.
