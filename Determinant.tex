@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{On Determinants}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+
+\maketitle
+
+The goal of this document is to understand determinant of the matrix in a better way.
+
+First, view the matrix of $n\times n$ dimension as a linear transformation. It is helpful to think of determinant as a function that takes 
+$n$ many $\mathbb{R}^n$ dimensional vectors in the matrix and outputs a real number. The number it is supposed to tell us is
+ the change in oreinted volume by the action of matrix (linear transformation), disregarding the shape of inputs and outputs.
+
+ This heuristics can be made more precise by characterization
+  of determinant "function" in the following way.
+
+  \begin{enumerate}
+  \item Switching rows change the sign.
+  \item It is linear for each element (column) vector.
+  \item determinant of the identity matrix is 1.
+  \item Multiplying a row by a constant multiplies the determinant by that constnat.
+  \end{enumerate}
+
+  This motivates the definition of wedge product in differential topology.\\
+
+We define $$f\wedge g=\frac 1{k!l!}A(f\otimes g)$$ where
+$$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\dots,v_{k+l})=f(v_1,\dots,v_k)g(v_{k+1},\dots,v_{k+l}).$$
+  It follows that $$(\alpha^1\wedge\cdots\wedge \alpha^k)(v_1,\dots, v_k)=det[\alpha^i(v_j)]$$
+
+This is exactly an attempt to capture the characteristics of determinant; antilinearity
+ corresponds to 1, and linearity corresponds to 2 and 4. Further, 3 corresponds to the normalizing constant $\frac 1{k!l!}$.
+
+ \begin{remark}
+ \item It is intuitively clear that under these characterizations $det (AB)=det A*det B$
+ \item In this perspective, we can alternatively view the determinant as the product of all singular values, which are simply the degree of stretch in each $n$ direction.
+ \item Logarithm translates product to addition, and is a concave in itself. It follows that $\log det(A)$ where $A$ is positive definite
+  is concave. We may make this more rigorous by checking $g''(t)\leq 0$ where $g(t)=f(Z+tV)$ for $Z,V\in S^n$.
+ 
+ \end{remark}
+
+
+
+
+
+
+
+
+\end{document}
