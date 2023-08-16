@@ -44,38 +44,44 @@
 
 \maketitle
 
-The goal of this document is to understand determinant of the matrix in a better way.
+The aim of this document is to delve deeper into the concept of the determinant of a matrix, enriching our understanding beyond the standard definitions.
 
-First, view the matrix of $n\times n$ dimension as a linear transformation. It is helpful to think of determinant as a function that takes 
-$n$ many $\mathbb{R}^n$ dimensional vectors in the matrix and outputs a real number. The number it is supposed to tell us is
- the change in oreinted volume by the action of matrix (linear transformation), disregarding the shape of inputs and outputs.
-
- This heuristics can be made more precise by characterization
-  of determinant "function" in the following way.
-
+Begin by visualizing an $n\times n$ matrix as a linear transformation. In mathematics, it's often enlightening to 
+view objects not just for what they are, but for the roles they play—in this case, as functions. Through this lens, we can perceive the determinant as a function: it ingests
+n column vectors from $\mathbb{R^n}$ present in the matrix and 
+produces a real number. But what does this number represent? At its essence, the determinant 
+can be seen as an indicator of oriented volume.
   \begin{enumerate}
-  \item Switching rows change the sign.
-  \item It is linear for each element (column) vector.
-  \item determinant of the identity matrix is 1.
-  \item Multiplying a row by a constant multiplies the determinant by that constnat.
+  \item \textbf{Sign Inversion}: Interchanging rows (or columns) of the matrix inverts the sign of the determinant.
+  \item \textbf{Linearity}: The determinant is linear in relation to each column and row.
+  \item \textbf{Identity Matrix}: The determinant of the identity matrix is 1.
   \end{enumerate}
 
-  This motivates the definition of wedge product in differential topology.\\
+  With this understanding, we recognize the inherent logic in the definition
+   of the determinant. Moreover, when extended to continuous domains, this understanding paves the way to the concept of the wedge product—an 
+   essential tool for generalizing integration, which is fundamentally about calculating the 
+   "volume" of more complex structures, often referred to as manifolds.
+
 
 We define $$f\wedge g=\frac 1{k!l!}A(f\otimes g)$$ where
 $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\dots,v_{k+l})=f(v_1,\dots,v_k)g(v_{k+1},\dots,v_{k+l}).$$
   It follows that $$(\alpha^1\wedge\cdots\wedge \alpha^k)(v_1,\dots, v_k)=det[\alpha^i(v_j)]$$
 
-This is exactly an attempt to capture the characteristics of determinant; antilinearity
- corresponds to 1, and linearity corresponds to 2 and 4. Further, 3 corresponds to the normalizing constant $\frac 1{k!l!}$.
-
- \begin{remark}
- \item It is intuitively clear that under these characterizations $det (AB)=det A*det B$
- \item In this perspective, we can alternatively view the determinant as the product of all singular values, which are simply the degree of stretch in each $n$ direction.
- \item Logarithm translates product to addition, and is a concave in itself. It follows that $\log det(A)$ where $A$ is positive definite
-  is concave. We may make this more rigorous by checking $g''(t)\leq 0$ where $g(t)=f(Z+tV)$ for $Z,V\in S^n$.
- 
- \end{remark}
+  The formulation of $f\wedge g$ is meticulously designed to 
+  encapsulate the inherent attributes of the determinant. Specifically:
+  \begin{enumerate}
+    \item The anticommutative nature is reflected in the property 1.
+    \item The linearity is mirrored in property 2.
+    \item The normalization constant $\frac{1}{k!l!}$ embodies property 3.
+  \end{enumerate}
+\begin{remark}
+\begin{itemize}
+ \item The above characterizations intuitively demonstrate why \( \text{det}(AB) = \text{det}(A) \times \text{det}(B) \).
+ \item Viewing the determinant in this light, one can alternatively perceive it as the multiplication of all singular values. These values represent the extent of stretching in each of the \( n \) directions.
+ \item The logarithm function translates multiplication into addition and possesses inherent concavity. As a result, for a positive definite matrix \( A \), \( \log \text{det}(A) \) is concave. A more rigorous justification can be derived by verifying \( g''(t) \leq 0 \) for 
+ the function \( g(t) = f(Z + tV) \) where \( Z, V \in S^n \).
+\end{itemize}
+\end{remark}
 
 
 
