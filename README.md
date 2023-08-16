@@ -1,0 +1,1 @@
+This repo is a small collection of PDFs where I jot down my thoughts on various mathematical concepts. I'm passionate about drawing connections and emphasizing the intuitive side of things. While I hope to expand this collection over time, this space is primarily for my personal exploration and growth.
