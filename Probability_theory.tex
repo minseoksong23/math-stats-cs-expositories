@@ -1,0 +1,69 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{Distribution, distribution function, random variable and probability measure}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\maketitle
+\begin{definition}
+    Distribution function is a function $F:\mathbb{R}\to [0,1]$ that is non-decreasing and right-continuous.
+    Random variable is a measurable function $X:\Omega\to\mathbb{R}$ where $\Omega$ is equipped with probability measure and $\mathbb{R}$ with Lebesgue measure.
+    Probability measure is a measure defined on $\Omega$
+    Measure induced by random varialbe is distribution. 
+\end{definition}
+There are two important theories that look trivial but are not really trivial.
+\begin{itemize}
+\item The Skorokhod Representation Theorem 
+    states that for every CDF, there exists a canonical probability space and a random variable on that space with the given CDF.\\
+\item Kolmogorov's Existence threorem states that given finite dimensional sets of distribution, there exists a canonical probability space with random variables whose 
+corresponding distributions coincide with our original distributions.
+\item The existence of distribution function guarantees the existence of distribution, and vice versa.
+\item Thus, Kolmogorov's existence theorem is more general than Skorokhod Representation theorem.
+\end{itemize}
+
+\begin{proposition}
+    Let us assume that probability measure is complete. Let $X_t=Y_t$ almost everywhere for every $t\geq 0$.
+    Then there exists $\tilde{Y}_t=Y_t$ almost everywhere for every $t$ such that $X_t(w)=\tilde{Y}_t(w)$ for every $w\in P$ for every $t$ for 
+    measurable set $P$ with measure 1.
+\end{proposition}
+
+\end{document}
