@@ -48,7 +48,7 @@ The aim of this document is to delve deeper into the concept of the determinant 
 
 Begin by visualizing an $n\times n$ matrix as a linear transformation. In mathematics, it's often enlightening to 
 view objects not just for what they are, but for the roles they play—in this case, as functions. Through this lens, we can perceive the determinant as a function: it ingests
-n column vectors from $\mathbb{R^n}$ present in the matrix and 
+n column vectors from $\mathbb{R}^n$ present in the matrix and 
 produces a real number. But what does this number represent? At its essence, the determinant 
 can be seen as an indicator of oriented volume.
   \begin{enumerate}
@@ -76,13 +76,30 @@ $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\do
   \end{enumerate}
 \begin{remark}
 \begin{itemize}
- \item The above characterizations intuitively demonstrate why \( \text{det}(AB) = \text{det}(A) \times \text{det}(B) \).
- \item Viewing the determinant in this light, one can alternatively perceive it as the multiplication of all singular values. These values represent the extent of stretching in each of the \( n \) directions.
+ \item The above characterizations intuitively and rigorously (by simply checking that $\text{det}(A)\text{det}(B)$ satisfies three characterizations) demonstrate why $ \text{det}(AB) = \text{det}(A) \times \text{det}(B) $.
+ \item From this, we can see that the determinant of orthonormal matrix is $-1$ or $1$, and in turn that the determinant is a multiplication of all singular values by $SVD$.
+ \item These singular values represent the extent of stretching in each of the \( n \) directions.
  \item The logarithm function translates multiplication into addition and possesses inherent concavity. As a result, for a positive definite matrix \( A \), \( \log \text{det}(A) \) is concave. A more rigorous justification can be derived by verifying \( g''(t) \leq 0 \) for 
  the function \( g(t) = f(Z + tV) \) where \( Z, V \in S^n \).
 \end{itemize}
 \end{remark}
+\begin{definition}
+Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defined as a matrix $X\in\mathbb{C}^{n\times m}$ satisfying
+\begin{itemize}
+\item $(AX)^*=AX$
+\item $(XA)^* = XA$
+\item $XAX=X$
+\item $AXA=A$
+\end{itemize}
+\begin{remark}
+\begin{itemize}
+\item Uniqueness can be seen by computing $SVD$ and inverse each singular value, which is the most obvious thing to do.
+\item Geometrically, this is a least squares problem ($L^2$ norm): there exists a unique vector $x$ such that $Ax$ is closest to $b$.
+\item We can use different pseudo-inverse by using different norm, say $L^\infty$ norm.
 
+\end{itemize}
+\end{remark}
+\end{definition}
 
 
 
