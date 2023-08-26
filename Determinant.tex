@@ -96,7 +96,8 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 \item Uniqueness can be seen by computing $SVD$ and inverse each singular value, which is the most obvious thing to do.
 \item Geometrically, this is a least squares problem ($L^2$ norm): there exists a unique vector $x$ such that $Ax$ is closest to $b$.
 \item We can use different pseudo-inverse by using different norm, say $L^\infty$ norm.
-
+\item Related concept is rank-r approximation in Young-Eckart theorem. The key of the proof is by exploring the space spanned by the right
+ singular vectors $v_1,\dots,v_{r+1}$ (and connecting it to kernel of B) and deriving contradiction from that (for example by dimensionality argument).
 \end{itemize}
 \end{remark}
 \end{definition}
