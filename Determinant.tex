@@ -10,6 +10,8 @@
 \usepackage{mathabx}
 \usepackage{amsfonts}
 \usepackage{enumitem}
+\usepackage{hyperref}
+
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
@@ -98,6 +100,8 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 \item We can use different pseudo-inverse by using different norm, say $L^\infty$ norm.
 \item Related concept is rank-r approximation in Young-Eckart theorem. The key of the proof is by exploring the space spanned by the right
  singular vectors $v_1,\dots,v_{r+1}$ (and connecting it to kernel of B) and deriving contradiction from that (for example by dimensionality argument).
+\item Eckart-Young holds for any unitarily invariant norm. Intuitively, unitarily invariant norm is the one that "respects" the decomposition of SVD: proof can be found here: \url{https://cklixx.people.wm.edu/uinorm-note.pdf}
+
 \end{itemize}
 \end{remark}
 \end{definition}
