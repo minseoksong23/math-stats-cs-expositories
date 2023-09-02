@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+\title{Overfitting: Bias-Variance Tradeoff and PAC Learnability}
+\author{MinSeok Song}
+\date{}
+\maketitle
+Overfitting is a central challenge in machine learning and statistical modeling. This phenomenon can be viewed from multiple perspectives.
+\begin{proposition}
+For a fixed $x$, assume there exists a distribution for $f_k(x)$, representing a distribution over all training sets. Given that the data arises from the model $Y=f(x)+\epsilon$, where the expected value of $\epsilon$ is 0, we have:
+\[E(Y-f_k(x)^2) = \sigma^2 + \text{Bias}(f_k)^2 + \text{Var}(f_k(x))\]
+\end{proposition}
+\begin{remark}
+\begin{itemize}
+\item $\sigma$ is an irreducible error: this is the noise inherent in any real-world data collection process, which cannot be removed or reduced.
+\item The expected value is taken for a distribution over all training sets.
+\end{itemize}
+\end{remark}
+
+\begin{proof}
+The detailed proof involves algebraic manipulations, available at:
+\url{https://stats.stackexchange.com/questions/204115/understanding-bias-variance-tradeoff-derivation/354284#354284}
+\end{proof}
+
+\begin{proposition}
+Given the Empirical Risk Minimization (ERM) chosen hypothesis $h_S = \text{argmin}_{h\in\mathcal{H}}L_{S}(h)$, the following holds:
+\begin{enumerate}
+    \item $\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \mathcal{D}^m\left(\bigcup_{h\in \mathcal{H}_B}\{S\mid_x:L_S(h)=0\}\right)$
+    
+    \item With the assumption of I.I.D. data:
+    \[\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \lvert \mathcal{H_B}\rvert e^{-\epsilon m} \leq \lvert \mathcal{H}\rvert e^{-\epsilon m}\]
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}
+\begin{itemize}
+\item The first inequality illustrates that, given the realizability assumption, we obtain $L_S(h_S) = 0$. Since ERM operates on the set $\mathcal{H}_B=\{L_{\mathcal{D}, f}(h_S)>\epsilon\}$, there exists some $h\in \mathcal{H}_B$ such that $L_S(h) = 0$.
+\item The second inequality employs the inequality $1-\epsilon \leq e^{-\epsilon}$, which is tight for smaller $\epsilon$, and has an analytic advantage by using exponential.
+\item The cardinality of $\mathcal{H}$ is used instead of $\mathcal{H}_B$ because we do not know the size of $\mathcal{H_B}$ a priori.
+\end{itemize}
+\end{remark}
+
+\begin{corollary}
+For a finite hypothesis class $\mathcal{H}$, if $\delta\in (0,1)$, $\epsilon > 0$, and $m \geq \frac{\log(\lvert\mathcal{H}\rvert/\delta)}{\epsilon}$, then:
+\[L_{\mathcal{D}, f}(h_S) \leq \epsilon\]
+with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, given the realizability assumption.
+\end{corollary}
+
+\begin{remark}
+\begin{itemize}
+\item A smaller $\epsilon$ or $\delta$ necessitates a larger $m$ ($\epsilon$ has a stronger effect), which makes sense.
+\item A larger hypothesis class also increases the value of $m$, demonstrating the problem of overfitting. This can be traced back to the necessity for $L_S(h)$ to hold for every possible $S$. However, it's crucial to note that this represents a worst-case scenario and might not be tight.
+\end{itemize}
+\end{remark}
+
+\begin{example}
+    Let \( h \) be defined as:
+    \[
+    h_{(a_1, b_1, a_2, b_2)}(x_1, x_2) = 
+    \begin{cases} 
+    1 & \text{if } a_1 \leq x_1 \leq b_1 \text{ and } a_2 \leq x_2 \leq b_2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    Consider the hypothesis class consisting of all axis-aligned rectangles in the plane.
+    When presented with positive samples in this plane, the ERM corresponds to the rectangle that encompasses all these positive samples. Smallest such is our reason hypothesis of interest.
+    
+    
+\end{example}
+\end{document}
