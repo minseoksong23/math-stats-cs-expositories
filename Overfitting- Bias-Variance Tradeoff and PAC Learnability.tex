@@ -89,6 +89,7 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
 \begin{itemize}
 \item A smaller $\epsilon$ or $\delta$ necessitates a larger $m$ ($\epsilon$ has a stronger effect), which makes sense.
 \item A larger hypothesis class also increases the value of $m$, demonstrating the problem of overfitting. This can be traced back to the necessity for $L_S(h)$ to hold for every possible $S$. However, it's crucial to note that this represents a worst-case scenario and might not be tight.
+\item Note that the finiteness of $\lvert \mathcal{H}\rvert$ is crucial here. We have PAC learnability for a finite $VC$ dimension in genral, though this is only a sufficient condition.
 \end{itemize}
 \end{remark}
 
@@ -102,8 +103,15 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
     \end{cases}
     \]
     Consider the hypothesis class consisting of all axis-aligned rectangles in the plane.
-    When presented with positive samples in this plane, the ERM corresponds to the rectangle that encompasses all these positive samples. Smallest such is our reason hypothesis of interest.
-    
+    An algorithm that returns the smallest rectangle enclosing all positive examples in the training set is an ERM. 
+    The realizability assumption is crucial here in order to guarantee that 0-labeled training sets are located outside of this rectangle. We can show that for $m\geq \frac{4\log(4/\delta)}\epsilon$, the PAC condition holds. 
+    \begin{itemize}
+    \item In order to prove this, we cannot directly use the above corollary though, since our hypothesis class is not finite;
+        instead, we need some geometric tricks (consider $R(S)\subset R^*$ and $R_i, i=1,2,3,4$ with $D(R_i)=\epsilon/4$) along with exponential bound (for interpretable formula) and realizability assumption.
+    \item This is guaranteed by the fundamental theorem of statistical learning; VC dimension is $4<\infty$.
+    \item We can generalize to d-dimensional space: we simply replace 4 with 2d.
+    \item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
+    \end{itemize}
     
 \end{example}
 \end{document}
