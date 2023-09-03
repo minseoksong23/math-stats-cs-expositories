@@ -110,8 +110,48 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
         instead, we need some geometric tricks (consider $R(S)\subset R^*$ and $R_i, i=1,2,3,4$ with $D(R_i)=\epsilon/4$) along with exponential bound (for interpretable formula) and realizability assumption.
     \item This is guaranteed by the fundamental theorem of statistical learning; VC dimension is $4<\infty$.
     \item We can generalize to d-dimensional space: we simply replace 4 with 2d.
-    \item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
+    \item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability 
+    from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
     \end{itemize}
-    
 \end{example}
+    \subsubsection*{Generalization}
+
+    We propose three key ideas to further generalize the learning paradigm:
+    
+    \begin{enumerate}
+        \item \textbf{Joint Distribution Assumption:} 
+        Instead of treating the input \(x\) in isolation with \(x \sim \mathcal{D}\), both the input \(x\) and the output \(y\) are assumed to be drawn from a joint distribution, denoted as \((x,y) \sim \mathcal{D}\).
+    
+        \item \textbf{Agnostic Learnability:}
+        Moving beyond the traditional realizability assumption, we introduce the concept of \textit{agnostic learnability}. The criterion for learnability in this context is:
+        \[
+        L_\mathcal{D}(h) \leq \min_{h' \in \mathcal{H}} L_\mathcal{D}(h') + \epsilon
+        \]
+        Here, \(L_\mathcal{D}(h)\) represents the expected loss of hypothesis \(h\) under distribution \(\mathcal{D}\).
+    
+        \item \textbf{Generalized Loss Function:}
+        The loss function for our hypothesis can be extended as:
+        \[
+        L_\mathcal{D}(h) = \mathbb{E}_{z \sim \mathcal{D}} [l(h, z)]
+        \]
+        The loss function \(l(h,z)\) in prior discussions was defined as a binary function: \(l(h,z) = 1\) if \(h(x) \neq y\) and \(0\) otherwise. This generalized approach permits a broader range of definitions. The empirical loss for a sample set \(S\) is:
+        \[
+        L_S(h) = \frac{1}{m} \sum_{i=1}^{m} l(h, z_i)
+        \]
+        As an exemplar, the quadratic loss function can be expressed as:
+        \[
+        l(h, (x,y)) = (h(x) - y)^2
+        \]
+    \end{enumerate}
+    
+    These ideas enable a more flexible framework, suitable for addressing a diverse set of problems and loss functions in machine learning.
+
+    $\diamond$ To further elaborate on the idea of 'relaxation' we can introduce the concept of uniform convergence to get a sufficient condition for agnostic learnability.
+
+    \begin{proposition}
+    If a class $\mathcal{H}$ has the uniform convergence property with a function $m^{UC}_{\mathcal{H}}$ then the class is agnostically
+     PAC learnable with the sample complexity $m_{\mathcal{H}}(\epsilon,\delta)\leq m^{UC}_{\mathcal{H}}(\epsilon/2,\delta)$. Furthermore, in that case, the $ERM_{\mathcal{H}}$ paradigm is a successful 
+     agnostic PAC learner for $\mathcal{H}$.
+    \end{proposition}
+
 \end{document}
