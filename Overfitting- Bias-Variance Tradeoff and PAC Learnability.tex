@@ -73,11 +73,17 @@ Given the Empirical Risk Minimization (ERM) chosen hypothesis $h_S = \text{argmi
 
 \begin{remark}
 \begin{itemize}
-\item The first inequality illustrates that, given the realizability assumption, we obtain $L_S(h_S) = 0$. Since ERM operates on the set $\mathcal{H}_B=\{L_{\mathcal{D}, f}(h_S)>\epsilon\}$, there exists some $h\in \mathcal{H}_B$ such that $L_S(h) = 0$.
+\item The first inequality is the consequence of the assumption that $L_S(h_S)=0$ for $h_S\in \mathcal{H}_\mathcal{B}$. The book is a bit misleading about its assumption on "realizability." It actually means that the set in the left hand side is a "bad training set" in the sense that there exists $h\in \mathcal{H}_\mathcal{B}$ with $R_S(h)=0$.
 \item The second inequality employs the inequality $1-\epsilon \leq e^{-\epsilon}$, which is tight for smaller $\epsilon$, and has an analytic advantage by using exponential.
 \item The cardinality of $\mathcal{H}$ is used instead of $\mathcal{H}_B$ because we do not know the size of $\mathcal{H_B}$ a priori.
 \end{itemize}
 \end{remark}
+
+$\ast$ It is important to distinguish the following two contexts of "realizability."
+\begin{enumerate}
+\item There exists h such that $L_D(h)=0$.
+\item For the set with its ERM $h_S$ having non-zero error, it will always contain a hypothesis with zero empirical error.
+\end{enumerate}
 
 \begin{corollary}
 For a finite hypothesis class $\mathcal{H}$, if $\delta\in (0,1)$, $\epsilon > 0$, and $m \geq \frac{\log(\lvert\mathcal{H}\rvert/\delta)}{\epsilon}$, then:
@@ -106,14 +112,26 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
     An algorithm that returns the smallest rectangle enclosing all positive examples in the training set is an ERM. 
     The realizability assumption is crucial here in order to guarantee that 0-labeled training sets are located outside of this rectangle. We can show that for $m\geq \frac{4\log(4/\delta)}\epsilon$, the PAC condition holds. 
     \begin{itemize}
-    \item In order to prove this, we cannot directly use the above corollary though, since our hypothesis class is not finite;
-        instead, we need some geometric tricks (consider $R(S)\subset R^*$ and $R_i, i=1,2,3,4$ with $D(R_i)=\epsilon/4$) along with exponential bound (for interpretable formula) and realizability assumption.
+    \item To establish the PAC condition, we cannot directly apply the previous corollary due to our hypothesis class being infinite. Instead, the proof requires a blend of geometric insights and probabilistic bounds. Our approach involves considering \( R(S) \subset R^* \) and the outer rectangles \( R_i \) for \( i = 1, 2, 3, 4 \), each with a measure \( D(R_i) = \frac{\epsilon}{4} \). While employ the exponential bounds, which gives an interpretable formula, and adhering to the realizability assumption; we focus on computing the probability that the squares \( R_i \) do not encompass any data points from the distribution.
     \item This is guaranteed by the fundamental theorem of statistical learning; VC dimension is $4<\infty$.
     \item We can generalize to d-dimensional space: we simply replace 4 with 2d.
     \item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability 
     from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
     \end{itemize}
 \end{example}
+\begin{example}
+    Consider the ERM rule defined such that whenever we encounter a value of \(1\) in our sample dataset, all subsequent values are assigned \(0\). To establish PAC learnability, assume \(P(x_+) > \epsilon\) and \(x_+ \neq S\). The probability that the learned hypothesis \(h_S\) misclassifies is given by 
+    \[ P(L_D(h_S)) \leq (1-\epsilon)^m \]
+    Following from this, the sample complexity needed for PAC learning can be bounded as:
+    \[ m_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{\log (1/\delta)}{\epsilon} \right\rceil \]
+    \end{example}
+
+    \begin{example}
+    As for minimizing the risk, we note that for binary classification problem, Bayes classifier is optimal. To show this, we need to prove that $$P(f(X)\neq Y\vert X=x)-P(t(X)\neq Y\vert X=x)\geq 0$$ where $t(x)=1$ if $P(Y=1\vert X=x)\geq 1/2$ and -1 otherwise. We can 
+    do this by showing that $$P(f(X)\neq\vert X=x)=(1-2P(Y=1\vert X=x))1_{f(x)=1}+P(Y=1\vert X=x)$$ and $$P(t(x)\neq Y\vert X=x)=min(P(Y=1\vert X=x), P(Y=-1\vert X=x)).$$
+
+
+    \end{example}
     \subsubsection*{Generalization}
 
     We propose three key ideas to further generalize the learning paradigm:
