@@ -47,12 +47,14 @@
 Overfitting is a central challenge in machine learning and statistical modeling. This phenomenon can be viewed from multiple perspectives.
 \begin{proposition}
 For a fixed $x$, assume there exists a distribution for $f_k(x)$, representing a distribution over all training sets. Given that the data arises from the model $Y=f(x)+\epsilon$, where the expected value of $\epsilon$ is 0, we have:
-\[E(Y-f_k(x)^2) = \sigma^2 + \text{Bias}(f_k)^2 + \text{Var}(f_k(x))\]
+\[E(Y-f_k(x))^2s = \sigma^2 + \text{Bias}(f_k)^2 + \text{Var}(f_k(x))\]
 \end{proposition}
 \begin{remark}
 \begin{itemize}
 \item $\sigma$ is an irreducible error: this is the noise inherent in any real-world data collection process, which cannot be removed or reduced.
 \item The expected value is taken for a distribution over all training sets.
+\item In the context of learning theory, we can view this in the light of tradeoff between $\epsilon_{app}$ and $\epsilon_{est}$ where $\epsilon_{app}=\min_{h\in\mathcal{H}}L_\mathcal{D}(h)$ and $\epsilon_{est}=L_\mathcal{D}(h_S)-\epsilon_{app}$.
+\item More modern issue involves the tradeoff between accuracy and interpretability; it is described in this paper: \url{https://arxiv.org/pdf/2010.13764.pdf} 
 \end{itemize}
 \end{remark}
 
@@ -128,7 +130,7 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
 
     \begin{example}
     As for minimizing the risk, we note that for binary classification problem, Bayes classifier is optimal. To show this, we need to prove that $$P(f(X)\neq Y\vert X=x)-P(t(X)\neq Y\vert X=x)\geq 0$$ where $t(x)=1$ if $P(Y=1\vert X=x)\geq 1/2$ and -1 otherwise. We can 
-    do this by showing that $$P(f(X)\neq\vert X=x)=(1-2P(Y=1\vert X=x))1_{f(x)=1}+P(Y=1\vert X=x)$$ and $$P(t(x)\neq Y\vert X=x)=min(P(Y=1\vert X=x), P(Y=-1\vert X=x)).$$
+    do this by showing that $$P(f(X)\neq\vert X=x)=(1-2P(Y=1\vert X=x))1_{f(x)=1}+P(Y=1\vert X=x)$$ and $$P(t(x)\neq Y\vert X=x)=min(P(Y=1\vert X=x), P(Y=-1\vert X=x))$$
 
 
     \end{example}
@@ -171,5 +173,28 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
      PAC learnable with the sample complexity $m_{\mathcal{H}}(\epsilon,\delta)\leq m^{UC}_{\mathcal{H}}(\epsilon/2,\delta)$. Furthermore, in that case, the $ERM_{\mathcal{H}}$ paradigm is a successful 
      agnostic PAC learner for $\mathcal{H}$.
     \end{proposition}
+    \begin{proposition}
+    Uniform convergence is sufficient and necessary condition for PAC learnability (but only sufficient for agnostic learnability).
+    \end{proposition}
 
+    \begin{theorem}
+    (No-Free-Lunch) Let A be a learning algorithm for binary classification for 0-1 loss. Let m be any number smaller than $\mathcal{X}/2$. There exists 
+    a distribution $\mathcal{D}$ over $\mathcal{X}\times\{0,1\}$ such that 
+    \begin{enumerate}
+    \item There exists a classifying function $f$ with $L_\mathcal{D}(f)=0$.
+    \item With probability of at least 1/7 over the choice of $S\sim \mathcal{D}^m$ we have that $L_{\mathcal{D}}(A(S))\geq 1/8$.
+    \end{enumerate}
+    \end{theorem}
+    \begin{remark}
+    \begin{itemize}
+    \item In order to prove this, it suffices to show that $\max_{i\in[T]} E_{S\sim\mathcal{D}^m}[L_\mathcal{D}(A(S))]\geq 1/4$
+    \item The idea of the proof is to use uniform distribution $\mathcal{D}_i$ induced by $f_i$. Since we are saying that no particular algorithm always works, it makes sense to use uniformity.
+    \item The algebraic manipulation in the proof used the idea of max$>$average$>$min. The NFL theorem makes the profound
+     statment that while some algorithms may shine brilliantly in some scenarios and fail miserably in others, on average, they all even out; so the 
+     algebra goes along with this philosophy. 
+    \end{itemize}
+    \end{remark}
+    \begin{corollary}
+    Let $\mathcal{X}$ be an infinite domain set and let $\mathcal{H}$ be the set of all functions from $\mathcal{X}$ to $\{0,1\}$. Then $\mathcal{H}$ is not PAC learnable.
+    \end{corollary}
 \end{document}
