@@ -1,0 +1,119 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{Algorithms}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+
+\maketitle
+\subsection*{Spectral clustering}
+\begin{definition}
+$Ncut(A,B)$ is defined as $$Ncut(A,B) = cut(A,B)(\frac 1{d(A)}+\frac 1{d(B)})$$ where $d(A)=\sum_{i\in A}d_i$.
+\end{definition}
+\begin{remark}
+\begin{itemize}
+\item The intuition is that when $A$ is relatively small, the $\frac 1{d(A)}$ will be large, hence discouraging the isolating small groups.
+\item Finding minimum Ncut is equivalent to finding vector $v$ that minimizes $$\frac{v^T Lv}{v^tDv}\text{such that }v^tD1=0,v_i\in\{a,b\}$$ where 
+$L=D-W$.
+
+\end{itemize}
+\end{remark}
+
+\subsection*{When the data is separable linearly}
+There are several ways. First, linear programming.
+\begin{algorithm}[H]
+        \caption{Linear Programming for Classifier}
+        \begin{align*}
+        \textbf{Objective:} \quad & \text{minimize} \quad \mathbf{u} = (0, \ldots, 0) \quad \text{(dummy variable)} \\
+        \textbf{Subject to:} \quad & A\mathbf{w} \geq \begin{bmatrix} 1 \\ \vdots \\ 1 \end{bmatrix} \\
+        & A_{i,j} = y_i x_{i,j} \quad \text{(where \(j\)'th element of the vector \(x_i\))}
+\end{align*}
+\end{algorithm}
+\begin{remark}
+\begin{itemize}
+\item $u$ is a dummy variable here; we essentially only check if the constraint is satisfied.
+\item This is only applied for when the data is separable.
+\item We can formula the regression problem with loss function $l(h, (x,y))=\lvert h(x)=y\rvert$ using linear programming.
+\end{itemize}
+\end{remark}
+
+\begin{algorithm}[H]
+        \caption{Batch Perceptron}
+        \begin{algorithmic}[1]
+        \Function{BatchPerceptron}{$x_1$, $y_1$, $\ldots$, $x_m$, $y_m$}
+            \State $w(1) \gets (0, \ldots, 0)$
+            \For{$t \gets 1, 2, \ldots$}
+                \If{there exists $i$ such that $y_i \langle w(t), x_i \rangle \leq 0$}
+                    \State $w(t+1) \gets w(t) + y_i x_i$
+                \Else
+                    \State \textbf{output} $w(t)$
+                    \State \textbf{break}
+                \EndIf
+            \EndFor
+        \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+        \begin{remark}
+        \begin{itemize}
+        \item Note that $y_i(w^{(t+1)}, x_i)=y_i(w^{(t)}, x_i)+\lVert x_i\rVert^2$
+        \item The algorithm must stop after at most $(RB)^2$ iterations, where $R=\max_i\lVert x_i\rVert$ represents a data spread, and $B=\min\{\lVert w\rVert: i\in[m], y_i\langle w,x_i\rangle\geq 1\}$ represents 
+        margin.
+        \item To prove this, it suffices to show that $1\geq\frac{\langle w^*, w^{(T+1)}\rangle}{\lVert w^*\rVert\lVert w^{(T+1)}\rVert}\geq\frac{\sqrt T}{RB}$, which we proceed by bounding numerator and denominator separately.
+        \item We can prove that this bound is tight. For some vector $w^* \in \mathbb{R}^d$, the algorithm incurs $m = (BR)^2$ errors (considering $m = d$).
+        \item Moreover, for $d = 3$, an algorithm can be designed to commit exactly (m) errors for any given $m \in \mathbb{N}$, serving as an upper bound concurrently        \end{itemize}
+        \end{remark}
+
+        \subsection*{Logistic Regression}
+        \begin{definition}
+        Fit the logistic function $\phi_{sig}(x)=\frac 1{1+exp(-\langle w,x\rangle)}$ with minimization scheme $w=argmin_{w\in\mathbb{R}^d} \frac 1m\sum^m_{i=1} \log(1+exp(-y_i\langle w,x_i\rangle))$.
+        \end{definition}
+        \begin{remark}
+        \begin{itemize}
+        \item The explaratory variable is between 0 and 1, making it interpretable as a probability.
+        \item Appropriate for binary classification.
+        \item Logistic loss function is a convex function so it's efficient to minimize.
+        \end{itemize}
+        \end{remark}
+\end{document}
