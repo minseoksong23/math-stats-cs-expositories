@@ -1,0 +1,63 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{Inequalities}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+
+\maketitle
+\subsection*{Markov Inequality}
+Start with $P(Z\geq a)\leq \frac{E(Z)}a$\\
+It follows that $P(Z>1-a)\geq \frac{\mu-(1-a)}a$. The idea is that if you know that $Z$ is less than or equal to 1, then you use Markov inequality to $1-Z$; then we get the opposite inequality direction from Markov inequality. 
+
+\subsection*{Hoeffding's inequality}
+Assume that $Z_i$'s are i.i.d. samples and $P[a\leq Z_i\leq b]=1$ for every $i$. Further let us say $E(Z_i)=\mu$. Then we have $P(\bar Z-\mu)\leq 2\exp(\frac{-2m\epsilon^2}){(b-a)^2}$.
+\begin{remark}
+Hoeffding's inequality provides a decay rate of deviation (it is exponentially fast). 
+\end{remark}
+
+\subsection*{Central limit theorem}
+Central limit theorem states that $\sqrt n(\bar{X_n}-\mu)$ converges in distribution to $\mathcal{N}(0,\sigma^2)$
+\begin{remark}
+CLT gives the rate of convergence of law of large number, which is $\frac{1}{\sqrt{n}}$.
+\end{remark}
+\end{document}
