@@ -47,7 +47,7 @@
 \begin{document}
 
 \maketitle
-\subsection*{Spectral clustering}
+\section*{Spectral clustering}
 \begin{definition}
 $Ncut(A,B)$ is defined as $$Ncut(A,B) = cut(A,B)(\frac 1{d(A)}+\frac 1{d(B)})$$ where $d(A)=\sum_{i\in A}d_i$.
 \end{definition}
@@ -60,7 +60,7 @@ $L=D-W$.
 \end{itemize}
 \end{remark}
 
-\subsection*{When the data is separable linearly}
+\section*{Algorithms for Linearly Separable Data}
 There are several ways. First, linear programming.
 \begin{algorithm}[H]
         \caption{Linear Programming for Classifier}
@@ -79,41 +79,138 @@ There are several ways. First, linear programming.
 \end{remark}
 
 \begin{algorithm}[H]
-        \caption{Batch Perceptron}
-        \begin{algorithmic}[1]
-        \Function{BatchPerceptron}{$x_1$, $y_1$, $\ldots$, $x_m$, $y_m$}
-            \State $w(1) \gets (0, \ldots, 0)$
-            \For{$t \gets 1, 2, \ldots$}
-                \If{there exists $i$ such that $y_i \langle w(t), x_i \rangle \leq 0$}
-                    \State $w(t+1) \gets w(t) + y_i x_i$
-                \Else
-                    \State \textbf{output} $w(t)$
-                    \State \textbf{break}
-                \EndIf
-            \EndFor
-        \EndFunction
-        \end{algorithmic}
-    \end{algorithm}
+    \caption{Batch Perceptron}
+    \begin{algorithmic}[1]
+    \Function{BatchPerceptron}{$x_1$, $y_1$, $\ldots$, $x_m$, $y_m$}
+        \State $w(1) \gets (0, \ldots, 0)$
+        \For{$t \gets 1, 2, \ldots$}
+            \If{there exists $i$ such that $y_i \langle w(t), x_i \rangle \leq 0$}
+                \State $w(t+1) \gets w(t) + y_i x_i$
+            \Else
+                \State \textbf{output} $w(t)$
+                \State \textbf{break}
+            \EndIf
+        \EndFor
+    \EndFunction
+    \end{algorithmic}
+\end{algorithm}
 
-        \begin{remark}
-        \begin{itemize}
-        \item Note that $y_i(w^{(t+1)}, x_i)=y_i(w^{(t)}, x_i)+\lVert x_i\rVert^2$
-        \item The algorithm must stop after at most $(RB)^2$ iterations, where $R=\max_i\lVert x_i\rVert$ represents a data spread, and $B=\min\{\lVert w\rVert: i\in[m], y_i\langle w,x_i\rangle\geq 1\}$ represents 
-        margin.
-        \item To prove this, it suffices to show that $1\geq\frac{\langle w^*, w^{(T+1)}\rangle}{\lVert w^*\rVert\lVert w^{(T+1)}\rVert}\geq\frac{\sqrt T}{RB}$, which we proceed by bounding numerator and denominator separately.
-        \item We can prove that this bound is tight. For some vector $w^* \in \mathbb{R}^d$, the algorithm incurs $m = (BR)^2$ errors (considering $m = d$).
-        \item Moreover, for $d = 3$, an algorithm can be designed to commit exactly (m) errors for any given $m \in \mathbb{N}$, serving as an upper bound concurrently        \end{itemize}
-        \end{remark}
+\begin{remark}
+\begin{itemize}
+\item Note that $y_i(w^{(t+1)}, x_i)=y_i(w^{(t)}, x_i)+\lVert x_i\rVert^2$
+\item The algorithm must stop after at most $(RB)^2$ iterations, where $R=\max_i\lVert x_i\rVert$ represents a data spread, and $B=\min\{\lVert w\rVert: i\in[m], y_i\langle w,x_i\rangle\geq 1\}$ represents 
+margin.
+\item To prove this, it suffices to show that $1\geq\frac{\langle w^*, w^{(T+1)}\rangle}{\lVert w^*\rVert\lVert w^{(T+1)}\rVert}\geq\frac{\sqrt T}{RB}$, which we proceed by bounding numerator and denominator separately.
+\item We can prove that this bound is tight. For some vector $w^* \in \mathbb{R}^d$, the algorithm incurs $m = (BR)^2$ errors (considering $m = d$).
+\item Moreover, for $d = 3$, an algorithm can be designed to commit exactly (m) errors for any given $m \in \mathbb{N}$, serving as an upper bound concurrently        \end{itemize}
+\end{remark}
 
-        \subsection*{Logistic Regression}
-        \begin{definition}
-        Fit the logistic function $\phi_{sig}(x)=\frac 1{1+exp(-\langle w,x\rangle)}$ with minimization scheme $w=argmin_{w\in\mathbb{R}^d} \frac 1m\sum^m_{i=1} \log(1+exp(-y_i\langle w,x_i\rangle))$.
-        \end{definition}
-        \begin{remark}
-        \begin{itemize}
-        \item The explaratory variable is between 0 and 1, making it interpretable as a probability.
-        \item Appropriate for binary classification.
-        \item Logistic loss function is a convex function so it's efficient to minimize.
-        \end{itemize}
-        \end{remark}
+\section*{Logistic Regression}
+\begin{definition}
+Fit the logistic function $\phi_{sig}(x)=\frac 1{1+exp(-\langle w,x\rangle)}$ with minimization scheme $w=argmin_{w\in\mathbb{R}^d} \frac 1m\sum^m_{i=1} \log(1+exp(-y_i\langle w,x_i\rangle))$.
+\end{definition}
+\begin{remark}
+\begin{itemize}
+\item The explaratory variable is between 0 and 1, making it interpretable as a probability.
+\item Appropriate for binary classification.
+\item Logistic loss function is a convex function so it's efficient to minimize.
+\end{itemize}
+\end{remark}
+
+\section*{Variational Inference and EM algorithm}
+\begin{definition}
+Kullback-Leibler(KL) divergence between p.d.f.s g and f is given by
+    $$d_{KL}(g\|f)=E_g[\log(\frac gf)]$$
+\end{definition}
+This is always nonnegative and it can be shown by Jensen's inequality. Intuitively, 
+we have more 'confidence' on g whenever g is greater than f, whence the logarithm is positive.
+\begin{definition}
+The ELBO (Evidence Lower-Bound) of a p.d.f. g with respect to an unnormalized p.d.f. $\tilde{f}$ is given by
+
+$$ELBO(g):=E_g[\log \frac{\tilde{f}}{g}]$$
+\end{definition}
+\begin{remark}
+\begin{itemize}
+\item Simple algebra yields $ELBO(g)\leq \log c$, where c is a normalizing constant.
+\item Let's think in Bayesian framework; our unnormalized function in this case is
+    $\tilde{f}(\theta):=f(y\vert \theta)f(\theta)$, so $ELBO(g)\leq\log f(y)$.
+\item This justifies the name "evidence lower-bound" and this helps with the choice of modeling (essentially maximizing ELBO).
+\item We write ELBO(g), but really, what's omitted is that this is with respect to $\tilde f(\theta)$.
+\end{itemize}
+\end{remark}
+\begin{remark}
+    \begin{itemize}
+\item It follows that $ELBO(g)=E_g[\log f(y\rvert \theta)]-d_{KL}(g(\theta)\| f(\theta))$\\
+\item In another Bayesian framework, similar equality (will be used in EM algorithm) is
+\begin{align*}
+        & ELBO(g,\theta)\\
+        & =\int \log(\frac{f(y,z\vert\theta)}{g(z)})g(z)dz\\
+        & =-d_{KL}(g(z)\| f(z\vert y,\theta))+\log(f(y\vert\theta))
+\end{align*}
+\end{itemize}
+\end{remark}
+The first term promotes matching the data, and the second term promotes matching prior beliefs.
+The reason we work with log domain is that, except for obvious reasons, it helps with numerical stability.
+\\
+Indeed, remark 2 motivates what's called EM algorithm.
+\begin{algorithm}
+    \caption{EM Algorithm}
+    \begin{algorithmic}[1] % [1] means showing line numbers
+    \State \textbf{Input:} Initialization of $\theta_0$
+    \Repeat
+        \State \textbf{E-step:} compute 
+        \[
+        E_{Z\sim f(z\mid y,\theta_l)}[\log f(y,Z\mid \theta)] = \int \log f(y,z\mid \theta)f(z\mid y,\theta_l)dz
+        \]
+        \State \textbf{M-step:} compute
+        \[
+        \theta_{l+1} = \text{arg max}_\theta E_{Z\sim f(z\mid y,\theta_l)}[\log f(y,Z\mid \theta)]
+        \]
+    \Until{some stopping criterion}
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}
+We have $\log f(y\vert \theta_l)\leq \log f(y\vert \theta{l+1})$
+\end{theorem}
+\begin{proof}
+Let $g_l(z)=f(z\vert y,\theta_l)$. We have
+
+\begin{align*}
+    \log f(y\vert\theta_{l+1}) &= ELBO(g_l,\theta_{l+1})+d_{KL}(g_l| f(z\vert y,\theta_{l+1})) \\
+    &\geq ELBO(g_l, \theta_l)+d_{KL}(g_l| f(z\vert y,\theta_l)) \\
+    &= \log f(y\vert \theta_l)
+    \end{align*}
+
+\end{proof}
+\begin{itemize}
+\item This shows that likelihood function is non-decreasing for each iteration, and since likelihood is always bounded by 1, we have established the convergence
+    of the algorithm.
+    \item GMM algorithm is a specific instance of this algorithm. Here, $w_{ik}$ can be thought of as latent variable, 
+    corresponding to E-step, and computing $\theta$ and $\pi$ corresponds to M-step.
+    \item E-step can be computationally expensive and so we usually use Monte-Carlo method to approximate.
+\end{itemize}
+\begin{remark}
+\begin{itemize}
+\item Let us now venture into variational inference, which we use when approximating the intractable distribution. For the choice of possible sets that $f$ admits in $d_{KL}(g\|f)$, we can use \textbf{mean field family}, 
+which assumes the independence for coordinate distributions. 
+\end{itemize}
+\end{remark}
+\begin{theorem}
+Let $g(x)=\prod^d_{i=1} g_i(x_i)$ with $g_{-i}(x_{-i})$ fixed. Then $$g_i^*(x_i)\propto \exp(E_{g_{-i}}[\log f(x_i, x_{-i}]))$$ maximizes
+    $ELBO(g)$.
+\end{theorem}
+\begin{proof}
+By routine algebra (we need to use independence at some point), one can show that $$ELBO(g)=E_{g_i}[\log (\exp(E_{g_{-i}}[\log f(x_i,x_{-i})]))-\log g_i(x_i)]+C$$
+and notice that the first term can be phrased as -$d_{KL}(g^*\| g)$, whence $g^*=g$ gives the optimization solution. 
+\end{proof}
+\begin{remark}
+    \begin{itemize}
+    \item The intuition is to average out the effect of $x_{-i}$ on log expected value in order to incorporate the independence between $g_i$'s. 
+\item This leads to the CAVI algorithm, which approximates the unnormalized target density $\tilde{f}$. After initialization, 
+updating $g_i$ will increase ELBO for each $i$, so may iterate until ELBO converges.
+\item The disadvantage is that it may be computationally expensive and accuracy might be not so good. 
+    \end{itemize}
+\end{remark}
+
 \end{document}
