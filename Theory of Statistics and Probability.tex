@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{Theory of statistics and probability}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\maketitle
+\section{Statistics}
+The dichotomy of Bayesian and Frequentist approach is mostly a matter of division based on foundational philosophical differences, and in some situation is not necessarily natural; each instance can be formally simply seen as a choice of analysis. The dichotomy has mainly developed based on two philosophical school of thoughts:
+ subjective belief (via prior distribution) vs. long-run frequency (via sampling distribution).
+Frequentist
+\begin{itemize}
+\item They avoid making probabilistic claims about model parameters and hypothesss. Instead, they describe the behavior of statistics and procedures over many hypothetical repeated samples.
+\item They use Statistics derived from data, and use deterministic approach for inference, with methods like hypothesis testing and confidence intervals to draw conclusions about population parameters based on sample data.
+\item examples: T-test, linear regression, etc
+\end{itemize}
+
+Bayesian
+\begin{itemize}
+\item They assign prior beliefs (distribution function) on parameters of model.
+\item They use probabilistic argument on specific hypothesis or parameter values.
+\item examples: MCMC, Bayesian hierarchical modeling, etc
+\end{itemize}
+
+\section{Probability Theory}
+\begin{definition}
+    \textbf{Distribution Function (F)}: A function \( F: \mathbb{R} \rightarrow [0,1] \) that:
+    \begin{enumerate}
+        \item Is non-decreasing.
+        \item Is right-continuous.
+        \item Limits to 0 as \( x \rightarrow -\infty \) and 1 as \( x \rightarrow \infty \).
+    \end{enumerate}
+    
+    \textbf{Random Variable (X)}: A measurable function \( X: \Omega \rightarrow \mathbb{R} \) where:
+    \begin{enumerate}
+        \item \( \Omega \) is a sample space equipped with a probability measure.
+        \item \( \mathbb{R} \) is the real line equipped with the Lebesgue measure.
+    \end{enumerate}
+    
+    \textbf{Probability Measure (P)}: A measure defined on a sample space \( \Omega \) whose total measure is 1.
+    
+    \textbf{Distribution (D)}: Given a random variable \( X \), its distribution is the measure induced by \( X \) on \( \mathbb{R} \).
+    
+    \textbf{Density Function (f)}: For a random variable \( X \), its density function \( f \) is any measurable function that satisfies:
+    \[ \Pr(X \in A) = \int_A f \, d\mu \]
+    for every measurable set \( A \subset \mathbb{R} \), where \( \mu \) is the Lebesgue measure.
+    \end{definition}
+    
+There are several theorems/properties that look trivial but are not really trivial.
+\begin{itemize}
+\item The Skorokhod Representation Theorem 
+    states that for every CDF, there exists a canonical probability space and a random variable on that space with the given CDF.
+\item Kolmogorov's Existence threorem states that given finite dimensional sets of distribution, under some conditions, there exists a canonical probability space with random variables whose 
+corresponding distributions coincide with our original distributions.
+\item The existence of distribution function does not guarantee the existence of density function. By Radon-Nikodym, there is a nice characterization when this happens: when distribution (which is a measure defined on $\mathbb{R})$ corresponding to distribution function is absolutely continuous with respect to
+ Lebesgue measure.
+\item The existence of distribution function guarantees the existence of distribution, and vice versa.
+\item Thus, Kolmogorov's existence theorem is more general than Skorokhod Representation theorem.
+\end{itemize}
+Throughout the theory of probability, we usually assume that the probability measure is complete, because of the following proposition.
+\begin{proposition}
+    Let us assume that probability measure is complete. Let $X_t=Y_t$ almost everywhere for every $t\geq 0$.
+    Then there exists $\tilde{Y}_t=Y_t$ almost everywhere for every $t$ such that $X_t(w)=\tilde{Y}_t(w)$ for every $w\in P$ for every $t$ for 
+    measurable set $P$ whose measure is 1.
+\end{proposition}
+
+\end{document}
