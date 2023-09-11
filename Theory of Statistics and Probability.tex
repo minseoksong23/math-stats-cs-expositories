@@ -26,6 +26,7 @@
             }}
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
+\usepackage{titlesec}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -37,6 +38,12 @@
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
 
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
+
 \title{Theory of statistics and probability}
 \author{MinSeok Song}
 \date{}
@@ -44,7 +51,7 @@
 \pgfplotsset{compat=1.18}
 \begin{document}
 \maketitle
-\section{Statistics}
+\bigsection{Statistics}
 The dichotomy of Bayesian and Frequentist approach is mostly a matter of division based on foundational philosophical differences, and in some situation is not necessarily natural; each instance can be formally simply seen as a choice of analysis. The dichotomy has mainly developed based on two philosophical school of thoughts:
  subjective belief (via prior distribution) vs. long-run frequency (via sampling distribution).
 Frequentist
@@ -61,7 +68,126 @@ Bayesian
 \item examples: MCMC, Bayesian hierarchical modeling, etc
 \end{itemize}
 
-\section{Probability Theory}
+\subsection*{data science}[list of topics that will be discussed]
+\begin{enumerate}
+\item Preparation of data
+\begin{itemize}
+\item handling missing data (imputation, etc)
+\item transformation
+\item Box-Cox transformation
+\item Outliers
+\end{itemize}
+
+\item Interpret descriptive statistics about data
+\begin{itemize}
+\item plots
+\item t-distribution
+\item F-distribution
+\end{itemize}
+
+\item Modeling (parametric, nonparametric)
+\begin{itemize}
+\item ANOVA
+\item Ensemble methods
+\item Boosting
+\item AIC-BIC
+\item Regularization
+\end{itemize}
+
+\item Predict based on model
+\begin{itemize}
+\item Confidence/Prediction intervals
+\item Real-time prediction
+\end{itemize}
+
+\item Inference on statistics
+\begin{itemize}
+\item Hypothesis testing
+\item p-value
+\item Type I/II error
+\item Causal inference
+\end{itemize}
+
+\item Evaluation of models
+\begin{itemize}
+\item Cross-validation
+\end{itemize}
+
+\item Communication of models
+\end{enumerate}
+
+\section{Preparation of Data}
+\subsection{Handling Missing Data}
+\subsubsection{Types of Missing Data}
+\begin{itemize}
+\item MCAR
+\item MAR
+\item MNAR
+
+\end{itemize}
+
+\subsection{Outliers}
+
+\section{Inference on statistics}
+\subsection{p-value}
+\begin{definition}
+Given some hypothesis, the p-value is the probability of obtaining test results at least as extreme as 
+the result actually observed, under the assumption that the null hypothesis is correct.
+\end{definition}
+\begin{itemize}
+\item If p-value is less than significance level, we reject the null hypothesis. Significance 
+level is a threshold we set to decide when we have enough evidence to reject the null hypothesis in favor of the alternative hypothesis.
+\item In statistics, we do not quite "prove" that the hypothesis is true. We can only reject the false statements or assertions (the theory of falsification, proposed by Karl Popper). 
+\end{itemize}
+
+\subsection{t-distribution}
+\begin{definition}
+t-distribution is defined as $\frac Z{\sqrt{\frac Vk}}$ where $Z \perp V$, $Z\sim N(0,1)$, and $V\sim \chi_k^2$.
+\end{definition}
+\begin{itemize}
+\item The t-distribution has the thicker tails than the normal distribution.
+\item Note that the $\chi_k^2$ distribution has mean $k$ and variance $2k$. Hence as $k$ gets larger the t-distribution 
+looks like standard normal distribution due to CLT. 
+\item In multiple regression setting, $\frac{\frac{\hat\beta_1-\beta_1}{\frac \sigma{\sqrt{\sum_i(X_i-\bar X)^2}}}}{\sqrt{(n-2)\cdot\frac{\hat \sigma^2}{\sigma^2}/(n-2)}}\sim t_{n-2}$ under normal assumption of residual.
+\subsubsection{Chi-squared distribution}
+\begin{itemize}
+\item It is possible to have $f(X)$ and $g(X)$ be independent. The key example concerns chi-distribution: Say $\theta$ is uniformly distributed in $[0,2\pi]$. 
+Let us say $R^2$ follows $chi$-squared distribution with degree 2: this acts like a distance square in the 2d space. Then $X= r\cos(\theta)$ and $Y=r\sin(\theta)$ are independent.
+\item The definition of chi-square looks contrived, in particular compared to normal distribution, but we use it a lot in the context of sum of squares.
+\end{itemize}
+\item Under moment assumption, it's approximately true for large $n$ via CLT.
+\end{itemize}
+
+\subsection{Prediction interval, Confidence interval}
+\begin{itemize}
+\item In the context of linear regression, a \textbf{confidence interval} provides a range of values within which we expect the true regression coefficient (e.g., $ \beta_0 $ or $ \beta_1 $) to lie with a certain level of confidence. This reflects our uncertainty about the 
+value of the coefficient based on the data we have observed.
+\item On the other hand, a \textbf{prediction interval} provides a range of values within which a new observation $ y $ (given a particular $ x $) is expected to fall with a certain level of confidence.
+ We have $y=\beta_0+\beta_1 x+\epsilon$. Note the additional uncertainty introduced by the random error $\epsilon$.
+\end{itemize}
+
+\subsection{Fisher information}
+\begin{definition}
+Fisher information is defined by $\mathcal{I}(\theta)=E[(\frac \partial{\partial\theta}\log f(X;\theta))^2|\theta]$ for appropriately regular $f$.
+\end{definition}
+
+\begin{itemize}
+\item Note that $E[\frac{\partial}{\partial\theta}\log f(X;\theta)|\theta]=0$.
+\item Think of this as how much (the logarithm of) likelihood varies in the vicinity of $\theta$.
+\item Large variation of likelihood we have more "information." (for example, if a deviation causes a significant drop in likelihood, 
+it means that the data is most probable under the original $\theta$ value.)
+\end{itemize}
+
+\begin{theorem} [Cramer-Rao bound]
+Say $\hat\theta(X)$ is an unbiased estimator. We have $Var(\hat\theta)\geq \frac 1{\mathcal{I}(\theta)}$.
+\end{theorem}
+
+\begin{itemize}
+\item This says that as the fisher information gets larger, we have better precision.
+\item There is a similar result for biased estimator.
+\end{itemize}
+
+\bigsection{Probability Theory}
 \begin{definition}
     \textbf{Distribution Function (F)}: A function \( F: \mathbb{R} \rightarrow [0,1] \) that:
     \begin{enumerate}
@@ -94,7 +220,8 @@ corresponding distributions coincide with our original distributions.
 \item The existence of distribution function does not guarantee the existence of density function. By Radon-Nikodym, there is a nice characterization when this happens: when distribution (which is a measure defined on $\mathbb{R})$ corresponding to distribution function is absolutely continuous with respect to
  Lebesgue measure.
 \item The existence of distribution function guarantees the existence of distribution, and vice versa.
-\item Thus, Kolmogorov's existence theorem is more general than Skorokhod Representation theorem.
+\item However, the corresponding distribution always exists (also called generalized function). 
+\item The previous discussion illustrates that Kolmogorov's existence theorem is more general than Skorokhod Representation theorem.
 \end{itemize}
 Throughout the theory of probability, we usually assume that the probability measure is complete, because of the following proposition.
 \begin{proposition}
@@ -103,4 +230,34 @@ Throughout the theory of probability, we usually assume that the probability mea
     measurable set $P$ whose measure is 1.
 \end{proposition}
 
+\subsection*{Covariance, Independence}
+\begin{itemize}
+\item Covariance only gives the information about linear relationship between two random variables. It has a limit of capturing non-linear relationship.
+\item Non-linear activation function in deep neural network is an example of such an attempt to leverage non-linearities.
+\item Further, as correlation gives only the linear relationship, zero correlation does not necessarily imply independence.
+\item Independence does not necessarily mean that, in a strict sense, two variables have no "relationsihps." It simply means
+ that the information \textbf{about the value of the random variable} does not give any information of \textbf{the value of the other random variable}. For example, we may have $Y=X^2$ where $X=-1$ or $1$.
+\item Also note that two random variables may have different mappings while having the same distribution: standard example is $1-X$ and $X\in [0,1]$.
+\end{itemize}
+
+\subsection*{Distribution function}
+\begin{itemize}
+\item If we were to calculate the density function of $X+Y$, we may use convolution.
+\item If we were interested in $\frac XY$, we may use transformation and integrate out. 
+\item Another analytic approach is to use characteristic functions.
+\item We can use Monte Carlo method numerically.
+
+\end{itemize}
+
+\subsection*{Convergence}
+
+\subsection*{Markov Chain}
+
+\subsection*{Martingale}
+
+\subsection*{Brownian Motion}
+
+\subsection*{Relationship with PDE}
+
+\subsection*{Relationship with Complex Analysis}
 \end{document}
