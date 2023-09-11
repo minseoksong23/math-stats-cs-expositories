@@ -27,6 +27,7 @@
             }}
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
+\usepackage{titlesec}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -37,6 +38,11 @@
 \theoremstyle{remark}
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
 
 \title{Algorithms}
 \author{MinSeok Song}
@@ -47,6 +53,90 @@
 \begin{document}
 
 \maketitle
+
+\bigsection{Algorithmic paradigm}
+\section{Divide and Conquer}
+\begin{theorem}[Master method]
+    Let \( T(n) = aT\left(\frac{n}{b}\right) + f(n) \). Then:
+    \begin{enumerate}
+        \item If \( f(n) = O\left(n^{\log_b a - \epsilon}\right) \) for some \( \epsilon > 0 \), then \( T(n) = \Theta(n^{\log_b a}) \).
+        \item If 
+        \begin{itemize}
+            \item \( f(n) = \Theta\left(n^{\log_b a}\right) \), then \( T(n) = \Theta\left(n^{\log_b a} \log n\right) \).
+            \item \( f(n) = \Theta\left(n^{\log_b a} \log^k n\right) \), then \( T(n) = \Theta\left(n^{\log_b a} \log^{k+1} n\right) \).
+        \end{itemize}
+        \item If \( f(n) = \Omega\left(n^{\log_b a + \epsilon}\right) \) for some \( \epsilon > 0 \) and \( af\left(\frac{n}{b}\right) \leq cf(n) \) for some \( c < 1 \), then \( T(n) = \Theta(f(n)) \).
+    \end{enumerate}
+\end{theorem}    
+\begin{itemize}
+\item We use substitution method to guess the solution or use induction to prove it formally.
+\item Recursion-tree method to discover the right guess (or also can be used for proof).
+\item We use Master Method to prove formally.
+\item This method doesn't always work: $T(n)=4T(n/2)+n^2/\log n$ (in-between cases of 1 and 2).
+\end{itemize}
+\begin{example}
+\begin{itemize}
+\item Merge Sort: $T(n) = 2\cdot T(n/2)+\Theta (n)$.
+\item Binary Search: $T(n)=T(n/2)+\Theta(1)$.
+\item Insertion Sort: $T(n)=\Theta(n)$ (best case), $T(n)=\Theta(n^2)$ (worst case)
+    \begin{itemize}
+    \item Iterate from $0$ to $n-1$, swap if in reverse order.
+    \end{itemize}
+\item Matrix multiplication (Strassen`60): $T(n)=7T(n/2)+\Theta(n^2)$ (scheme with 7 recursive multiplications of $n/2\times n/2$ submatrices).
+\item Quickselect (finding $i$'th smallest element): $T(n)=\max\{T(\vert \text{left part}\vert),\\ T(\vert\text{right part}\vert)\}+\Theta(n)$
+
+\begin{algorithm}
+    \caption{QuickSelect Algorithm}
+    \begin{algorithmic}[1] % [1] means showing line numbers
+    \State \textbf{Input:} Array $A$, indices $l$ and $r$, integer $i$
+    \Function{QuickSelect}{$A, l, r, i$}
+        \If{$l = r$}
+            \State \Return $A[l]$
+        \EndIf
+        \State $q \gets \text{PARTITION}(A, l, r)$
+        \State $k \gets q - l + 1$
+        \If{$i = k$}
+            \State \Return $A[q]$
+        \ElsIf{$i < k$}
+            \State \Return \Call{QuickSelect}{$A, l, q-1, i$}
+        \Else
+            \State \Return \Call{QuickSelect}{$A, q+1, r, i-k$}
+        \EndIf
+    \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+    \begin{itemize}
+    \item Best Case: $\Theta(n)$
+    \item Worst Case: $\Theta(n^2)$: This happens when we have sorted A. We may improve this to get $\Theta(n)$. How? First method is to use random pivot. 
+    Second method, which is deterministic, would be to choose a pivot element judiciously. Group $n$ elements into $\lceil n/5 \rceil$ groups and calculate median for each group.  Then 
+    we wil get $T(n)\geq T(\lceil n/5\rceil) + T(\frac {7n}{10}+2)+\Theta(n)$, which gives $T(n)=\Theta(n)$.
+    \item Typical case: $\Theta(n)$
+    \end{itemize}
+\begin{algorithm}
+    \caption{QuickSort Algorithm}
+    \begin{algorithmic}[1]
+    \State \textbf{Input:} Array \( A \), indices \( l \) and \( r \)
+    \Function{QuickSort}{$A,l,r$}
+        \If{$l<r$}
+            \State $q \gets \text{PARTITION}(A, l, r)$
+            \Call{QuickSort}{$A,l,q-1$}
+            \Call{QuickSort}{$A,q+1,r$}
+        \EndIf
+    \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\end{itemize}
+\end{example}
+
+\section{Dynamic Programming}
+
+\section{Greedy Algorithm}
+
+\section{BFS/DFS}
+
+
+
 \section*{Spectral clustering}
 \begin{definition}
 $Ncut(A,B)$ is defined as $$Ncut(A,B) = cut(A,B)(\frac 1{d(A)}+\frac 1{d(B)})$$ where $d(A)=\sum_{i\in A}d_i$.
@@ -98,7 +188,8 @@ There are several ways. First, linear programming.
 \begin{remark}
 \begin{itemize}
 \item Note that $y_i(w^{(t+1)}, x_i)=y_i(w^{(t)}, x_i)+\lVert x_i\rVert^2$
-\item The algorithm must stop after at most $(RB)^2$ iterations, where $R=\max_i\lVert x_i\rVert$ represents a data spread, and $B=\min\{\lVert w\rVert: i\in[m], y_i\langle w,x_i\rangle\geq 1\}$ represents 
+\item The algorithm must stop after at most $(RB)^2$ iterations, where $R=\max_i\lVert x_i\rVert$ represents a data spread, and \\
+$B=\min\{\lVert w\rVert: i\in [m], y_i\langle w,x_i\rangle\geq 1\}$ represents 
 margin.
 \item To prove this, it suffices to show that $1\geq\frac{\langle w^*, w^{(T+1)}\rangle}{\lVert w^*\rVert\lVert w^{(T+1)}\rVert}\geq\frac{\sqrt T}{RB}$, which we proceed by bounding numerator and denominator separately.
 \item We can prove that this bound is tight. For some vector $w^* \in \mathbb{R}^d$, the algorithm incurs $m = (BR)^2$ errors (considering $m = d$).
@@ -140,7 +231,7 @@ $$ELBO(g):=E_g[\log \frac{\tilde{f}}{g}]$$
 \end{remark}
 \begin{remark}
     \begin{itemize}
-\item It follows that $ELBO(g)=E_g[\log f(y\rvert \theta)]-d_{KL}(g(\theta)\| f(\theta))$\\
+\item It follows that $ELBO(g)=E_g[\log f(y\rvert \theta)]-d_{KL}(g(\theta)\| f(\theta))$
 \item In another Bayesian framework, similar equality (will be used in EM algorithm) is
 \begin{align*}
         & ELBO(g,\theta)\\
