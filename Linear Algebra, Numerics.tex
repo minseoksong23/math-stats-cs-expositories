@@ -37,7 +37,7 @@
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
 
-\title{On Determinants}
+\title{Linear Algebra, Numerics}
 \author{MinSeok Song}
 \date{}
 \usepackage{pgfplots}
@@ -46,8 +46,7 @@
 
 \maketitle
 
-The aim of this document is to delve deeper into the concept of the determinant of a matrix, enriching our understanding beyond the standard definitions.
-
+\section{Determinant}
 Begin by visualizing an $n\times n$ matrix as a linear transformation. In mathematics, it's often enlightening to 
 view objects not just for what they are, but for the roles they play—in this case, as functions. Through this lens, we can perceive the determinant as a function: it ingests
 n column vectors from $\mathbb{R}^n$ present in the matrix and 
@@ -85,6 +84,7 @@ $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\do
  the function \( g(t) = f(Z + tV) \) where \( Z, V \in S^n \).
 \end{itemize}
 \end{remark}
+\section{Pseudo Inverse, rank-r approximation}
 \begin{definition}
 Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defined as a matrix $X\in\mathbb{C}^{n\times m}$ satisfying
 \begin{itemize}
@@ -93,6 +93,7 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 \item $XAX=X$
 \item $AXA=A$
 \end{itemize}
+\end{definition}
 \begin{remark}
 \begin{itemize}
 \item Uniqueness can be seen by computing $SVD$ and inverse each singular value, which is the most obvious thing to do.
@@ -104,10 +105,18 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 
 \end{itemize}
 \end{remark}
-\end{definition}
+\section{Condition number}
 
 
 
+
+\section{Matrix decomposition}
+\subsection{LU decomposition}
+\subsection{LDU decomposition}
+\subsection{Cholesky factorization}
+\subsection{QR decomposition}
+\subsection{Jordan Canonical form}
+\subsection{Schur decomposition}
 
 
 
