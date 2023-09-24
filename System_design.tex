@@ -1,0 +1,93 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\title{A Programmer's perspective}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+
+\maketitle
+
+\section*{Code Security}
+\begin{itemize}
+    \item In the beginning of the chapter, B $\&$ H introduces two scenarios regarding vulnerability.
+    \item 1) Unlike Java, C doesn't feature a garbage collector. However, when declaring an array such as char kbuf[KSIZE];, the array kbuf can be initialized with garbage values. 
+    In two's complement representation, there's a significant difference between -MSIZE and MSIZE due 
+    to the most significant bit being set to 1 for negative numbers. This discrepancy can introduce vulnerabilities and potentially lead to memory leaks.
+    \item 2)If we do malloc(ele\_cnt * ele\_size) but if each argumnent is very large, the program might not allocate the desired memory size due to integer overflow.
+\end{itemize}
+
+\section*{Two's Complement}
+\subsection*{arithmetic and Underflow/Overflow}
+When adding two numbers in two's complement representation, there's a potential for underflow and overflow. \\
+Let's denote the result of addition as \(TAdd_w(u,v)\) \\ where \(w\) is the bit width of the numbers, and \(u\) and \(v\) 
+are the numbers being added. Then, we can define \(TAdd_w(u,v)\) as:
+
+\[
+TAdd_w(u,v) = 
+\begin{cases} 
+    u + v + 2^w & \text{if } u + v < TMin_w \\
+    u + v & \text{if } TMin_w \leq u + v \leq TMax_w \\
+    u + v - 2^w & \text{if } u + v > TMax_w
+\end{cases}
+\]
+
+Here, \(TMin_w\) and \(TMax_w\) are the minimum and maximum values representable with \(w\) bits in two's complement, respectively.
+
+For instance:
+\begin{itemize}
+    \item When we add two values (i.e., 0\ldots and 0\ldots) and get a result starting with 01\ldots, it indicates an overflow (desired: $a-2^{w-1}+b-2^{w-1}=a+b-2^w$, but what we get: $a+b+2^w-2^w=a+b$, where $a$ and $b$ are bits after the most significant bit, so subtract $2^w$).
+    \item When we add two values (i.e., 1\ldots and 1\ldots), and the result is 1\ldots, it indicates an overflow (desired: $y$, but what we get: $-(2^w-y)=y-2^w$, so add back $2^w$).
+\end{itemize}
+\begin{remark}
+\begin{itemize}
+\item Multiplication and division are a bit more involved; but essentially, we use addition and bit-shifting operations to accomplish tasks (we need to be careful when dividend is negative number and introduce the concept of "bias"). 
+\item When sign-extending an integer using the $>>$ (right shift) operator, the most significant bit (often called the sign bit) is replicated to fill in the shifted positions.
+\end{itemize}
+\end{remark}
+
+
+\end{document}
