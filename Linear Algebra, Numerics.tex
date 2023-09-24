@@ -1,8 +1,13 @@
-\documentclass{article}
-\usepackage[hyphens,spaces,obeyspaces]{url}
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{graphicx}
+\usepackage{enumerate}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -11,6 +16,7 @@
 \usepackage{amsfonts}
 \usepackage{enumitem}
 \usepackage{hyperref}
+
 
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
@@ -77,13 +83,16 @@ $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\do
   \end{enumerate}
 \begin{remark}
 \begin{itemize}
- \item The above characterizations intuitively and rigorously (by simply checking that $\text{det}(A)\text{det}(B)$ satisfies three characterizations) demonstrate why $ \text{det}(AB) = \text{det}(A) \times \text{det}(B) $.
+ \item The above characterizations intuitively and rigorously (by simply checking that\\
+  $\text{det}(A)\text{det}(B)$ satisfies three characterizations) demonstrate why\\
+   $ \text{det}(AB) = \text{det}(A) \times \text{det}(B) $.
  \item From this, we can see that the determinant of orthonormal matrix is $-1$ or $1$, and in turn that the determinant is a multiplication of all singular values by $SVD$.
  \item These singular values represent the extent of stretching in each of the \( n \) directions.
  \item The logarithm function translates multiplication into addition and possesses inherent concavity. As a result, for a positive definite matrix \( A \), \( \log \text{det}(A) \) is concave. A more rigorous justification can be derived by verifying \( g''(t) \leq 0 \) for 
  the function \( g(t) = f(Z + tV) \) where \( Z, V \in S^n \).
 \end{itemize}
 \end{remark}
+
 \section{Pseudo Inverse, rank-r approximation}
 \begin{definition}
 Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defined as a matrix $X\in\mathbb{C}^{n\times m}$ satisfying
@@ -102,14 +111,111 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 \item Related concept is rank-r approximation in Young-Eckart theorem. The key of the proof is by exploring the space spanned by the right
  singular vectors $v_1,\dots,v_{r+1}$ (and connecting it to kernel of B) and deriving contradiction from that (for example by dimensionality argument).
 \item Eckart-Young holds for any unitarily invariant norm. Intuitively, unitarily invariant norm is the one that "respects" the decomposition of SVD: proof can be found here: \url{https://cklixx.people.wm.edu/uinorm-note.pdf}
-
 \end{itemize}
 \end{remark}
+
 \section{Condition number}
+\begin{definition}
+The absolute condition number of a problem $f$ is \\
+$\lim_{\epsilon\to 0^+}\sup_{\lVert\delta x\rVert\leq \epsilon} \frac{\frac{\lVert\delta f(x)\rVert}{\lVert f(x)\rVert}}{\frac{\lVert \delta x\rVert}{\lVert x\rVert}}$
+\end{definition}
+\begin{itemize}
+\item Consider the invertible matrix $A$. Say $f(x):=A^{-1}x$. The condition number will be $\lVert A^{-1}\rVert\frac{\lVert x\rVert}{\lVert A^{-1}x\rVert}$. To eliminate the dependency, we 
+consider the "worst case" so that we get $\lVert A\rVert\lVert A^{-1}\rVert$.
+\item important to note that condition number may depend on $x$. Unless $f$ is continous, there is no reason to believe that the condition number is a constant.
+\end{itemize}
+$\ast$ We may illustrate some relationship with relative error.
 
+\begin{itemize}
+\item Assume that $A$ is a nonsingular matrix, and let $0\neq b\in \mathbb{R}^n$.
+Assume that $\lVert Ax\rVert\leq\lVert A\rVert\lVert x\rVert$ for all $A\in \mathbb{R}^{n\times n}$ and all $x\in \mathbb{R}^n$.
+\item Suppose $(A+\Delta A)(\mathbf{x}+\Delta\mathbf{x})=\mathbf{b}$ and
+$\mathbf{\hat{x}}=\mathbf{x}+\Delta\mathbf{x}$. We have that
+\begin{equation}
+\frac{\lVert\Delta\mathbf{x}\rVert}{\lVert\mathbf{\hat{x}}\rVert}\le
+\kappa(A)\dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}. \label{eq:perturb2}
+\end{equation}
+\item Suppose $(A+\Delta A)(\mathbf{x}+\Delta\mathbf{x})=\mathbf{b}$ and
+$\mathbf{\hat{x}}=\mathbf{x}+\Delta\mathbf{x}$. Further, suppose that $\frac{\lVert\Delta A\rVert}
+{\rVert A\rVert}<\frac 1{\kappa(A)}$.
+We have
+\begin{equation}
+\frac{\lVert\Delta\mathbf{x}\rVert}{\lVert\mathbf{x}\rVert}\le\frac
+{\kappa(A)\dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}}{1-\kappa
+(A)\dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}}.
+\end{equation}
+\item Suppose $(A+\Delta A)\mathbf{\hat{x}}=\mathbf{b}
++\Delta\mathbf{b}$ where $\mathbf{\hat{b}}=\mathbf{b}+\Delta\mathbf{b}
+\neq\mathbf{0}$ and $\mathbf{\hat{x}}=\mathbf{x}+\Delta\mathbf{x}
+\neq\mathbf{0}$. We have
+\begin{equation}
+\frac{\lVert\Delta\mathbf{x}\rVert}{\lVert\mathbf{\hat{x}}\rVert}\le
+\kappa(A)\left(  \frac{\lVert\Delta A\rVert}{\lVert A\rVert}+\frac
+{\lVert\Delta\mathbf{b}\rVert}{\lVert\mathbf{\hat{b}}\rVert}+\frac
+{\lVert\Delta A\rVert}{\lVert A\rVert}\frac{\lVert\Delta\mathbf{b}\rVert
+}{\lVert\mathbf{\hat{b}}\rVert}\right)  . \label{eq:perturb3}
+\end{equation}
+\item Suppose $(A+\Delta A)\mathbf{\hat{x}}=\mathbf{b}
++\Delta\mathbf{b}$ where $\mathbf{\hat{b}}=\mathbf{b}+\Delta\mathbf{b}
+\neq\mathbf{0}$ and $\mathbf{\hat{x}}=\mathbf{x}+\Delta\mathbf{x}
+\neq\mathbf{0}$. Further suppose that $\frac{\lVert\Delta A\rVert}{\rVert A\rVert}<\frac 1{\kappa(A)}$.
+We then have that
+\begin{equation}
+\frac{\lVert\Delta\mathbf{x}\rVert}{\lVert\mathbf{x}\rVert}\le\frac
+{\kappa(A)\left(  \dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}+\dfrac
+{\lVert\Delta\mathbf{b}\rVert}{\lVert\mathbf{b}\rVert}\right)  }
+{1-\kappa(A)\dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}}.
+\end{equation}
+\item As expected, condition number and the relative error of the matrix control the bound of relative error of $x$. The smaller, the better. 
+\item The condition involving $\kappa(A)$ is an upper bound of condition number. 
+\end{itemize}
 
+\section{Floating Point Arithmetic}
 
+The representation of floating-point numbers in many modern systems follows the IEEE 754 standard. This standard provides a consistent methodology to represent and manipulate real numbers on digital computing systems.
 
+\begin{definition}
+Given a floating point representation, \( x \), of the form:
+\[ x: \pm a_1a_2 \dots a_{11}b_1b_2 \dots b_{52} \]
+We can interpret \( x \) based on its bit patterns:
+\begin{itemize}
+    \item For \textbf{normalized} values, when \( a_1, \dots, a_{11} \) are not all 0's nor all 1's:
+    \[ x = \pm (1.b_1b_2 \dots b_{52})_2 \times 2^{(a_1a_2 \dots a_{11})_2 - 1023} \]
+    
+    \item For \textbf{subnormal} values when \( a_1, \dots, a_{11} \) are all 0's:
+    \[ x = \pm (0.b_1b_2 \dots b_{52})_2 \times 2^{(a_1a_2 \dots a_{11})_2 - 1022} \]
+\end{itemize}
+\end{definition}
+\begin{enumerate}
+\item The usage of subnormal is to prevent underflow.
+\item This is an excellent example of engineering design to represent real numbers given a fixed number of bits.
+\item The subnormal value is always less than or equalt o $2^{-1022}$, and the normalized value if greater than or equal to that, justifying such a choice.
+\end{enumerate}
+\begin{definition}
+The machine epsilon is the gap between 1 and the next largest floating point number. It is $2^{-52}\approx 10^{-16}$ for the double format.
+
+$\ast$ It follows that $\lvert \text{round}(x)-x\rvert\leq\frac{2^{-52}}2\cdot 2^e\leq \frac{2^{-52}}2\lvert x\rvert$.
+\end{definition}
+\begin{definition}
+Largely, we may use two kinds of error; absolute error, $\epsilon_{abs}=\lVert x-\hat x\rVert$ or $\epsilon_{rel} = \frac{\lVert x-\hat x\rVert}{\lVert x\rVert}$.
+\end{definition}
+\begin{itemize}
+\item One might ask, why would we use $x$ instead of $\hat x$ in the denominator. This is purely due to interpretability (just more natural).
+\end{itemize}
+\subsection*{On fl notation}
+How do we round? Well, we do
+\[
+\text{round}(x)=
+\begin{cases} 
+x_- & \text{if } d_- < d_+ \text{ or } (d_- = d_+ \text{ and } \text{lsb}(x_-) = 0) \\
+x_+ & \text{if } d_+ < d_- \text{ or } (d_+ = d_- \text{ and } \text{lsb}(x_+) = 0)
+\end{cases}
+\]
+\begin{itemize}
+\item We can check that when $x\in [N_{min}, N_{max}]$, we have $\epsilon_{rel}\leq \epsilon_{machine}$.
+\item Trefethen and Bau generalize this in the case $x=\pm (m/\beta^t)\beta^e$ where $\beta^{t-1}\leq m\leq \beta^t-1$, in which case we have the machine epsilon $\frac 12\beta^{1-t}$ (this is an idealized
+ case, since we do not have any restriction on the size of bits).
+\end{itemize}
 \section{Matrix decomposition}
 \subsection{LU decomposition}
 \subsection{LDU decomposition}
