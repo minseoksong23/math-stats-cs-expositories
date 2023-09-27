@@ -8,6 +8,7 @@
 \usepackage{tikz}
 \usepackage{graphicx}
 \usepackage{enumerate}
+\usepackage{titlesec}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -41,6 +42,11 @@
 \theoremstyle{remark}
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+
+
 
 \title{A Programmer's perspective}
 \author{MinSeok Song}
@@ -88,6 +94,108 @@ For instance:
 \item When sign-extending an integer using the $>>$ (right shift) operator, the most significant bit (often called the sign bit) is replicated to fill in the shifted positions.
 \end{itemize}
 \end{remark}
+
+\section*{Assembly Language}
+\subsection*{Register for x86-64}
+\begin{itemize}
+\item Extensive list is on \url{https://wiki.osdev.org/CPU_Registers_x86-64}
+\item RIP: Instruction pointer(used for count)
+\item RAX, RBX, RCX, RDX: general Purpose Registers, with RAX often used for return values.
+\item R8 to R15: extra general purpose register
+\item RSP: Stack pointer, RBP: Base Pointer
+\item RDI, RSI, RDX, RCX, R8, R9: used for function arguments
+\end{itemize}
+\subsection*{Basics, Control Flow}
+\begin{itemize}
+\item The type of processor (specifically its architectore or ISA - instruction Set Architecture) dictates the set
+ of instructions that are available for use.
+\item The example of processor includes
+\begin{enumerate}
+\item Intel: x86(widely-used 32-bit architecture), IA32(Intel's 32-bit architecture), \\
+Itanium(64-bit architecture developed by Intel, didn't see wide adoption compared to\\
+ x86-64 pioneered by AMD), x86-64(later cross-licensed, enabling both companies to introduce enhancements since)
+\item ARM: Used in almost all smartphones
+\end{enumerate}
+\item There are three ways to get assembly language for the code.
+\begin{enumerate}
+\item Use 'gcc' with the '-S' flag. For example, put gcc -S source.c
+\item Reverse engineering for the compiled binary. For example, put objdump -d binary\_name
+\item Using 'gdb' debugger. For example, go to gdb and put disassemble function\_name
+\end{enumerate}
+\item The last two options are appropriate when you do not want to go into the source code directly.
+\item Address computation
+\begin{itemize}
+\item 0x8 (\%rdx) means to add 0x8 to the address \%rdx.
+\item (\%rdx, \%rcx) means to add the address \%rdx with \%rcx.
+\item (\%rdx,\%rcx,4) means to add the address of \%rdx with four times the address of \%rcx.
+\end{itemize}
+\item Some Syntax for x86-64 architecture
+\begin{enumerate}
+\item movq: simply just moving; q stands for quadword (64bits, versus 8 bits for byte, 16 bits for word, and so on), meaning that this operates on a 64-bit quadword operand.
+\begin{example}
+When we do movq (\%rsi), \%rdx, this means that we are assigning the value at the address \%rsi to the register \%rdx.
+\end{example}
+\item leaq: this stands for "load effective address quadword."
+\begin{example}
+when we do leaq (\%rbx, \%rcx, 4), \%rax, we'd calculate \%rbx+4*\%rcx and put this address into \%rax. This is
+ different when using movq, we would access the value at that address.\\
+ Note that \%rbx and \%rcx can be address or register.
+\end{example}
+\item addq: add, imulq: multiplication, salq: shift, ret: return, etc
+\item when we do cmp, add, sub, etc, some flags (which belong to FLAGS register) are implicitly set, so we can use them for control flow.
+\item when we do cmp Src2, Src1, we effectly do Src1-Src2 but does not store result (as opposed to sub).
+\begin{enumerate}
+\item CF(carry flag) set: if carry out from most significant bit 
+\item ZF(zero flag) set: if a == b
+\item SF(sign flag) set: if (a-b) < 0
+\item OF(overflow flag) set: if two's complement overflow: $(a>0 \& b<0 \& (a-b)<0) || (a<0 \& b>0 \& (a-b)>0)$
+\end{enumerate}
+\item some notable registers when we use control flow: temporary data, location of runtime stack
+, location of current code control point(points to the instruction being executed), status of recent tests.
+\item when we say \%al, \%bl, \%cl, and so on, it refers to the lower end of \%rax, \%rbx, \%rcx, and so on.
+\item movzbl: stands for move. zero-extend, byte, long. Extend the rest 32 bits to zero.
+\item store the return value on \%rax.
+\end{enumerate}
+\item Conditional move vs. branch move
+\begin{enumerate}
+\item Conditional moves eliminate the need for branching by selecting a result based on a condition without branching.
+\item If the prediction of branch move is wrong, it can lead to a pipeline stall due to mispredicted branches.
+\item Even if we write if-else statement in C code, the compiler may use conditional move for optimization.
+\begin{example}
+pitfalls: $val = x>0 ? x*=7 : x+=3;$
+\end{example}
+\end{enumerate}
+\item GCC has some compiler optimization levels, such as -O1, -O2, -Og (the latter being high order, hence abstracting out),etc.
+ -Og is suited the most for illustration purposes. 
+\begin{example}
+\item gcc -Og -o p p1.c p2.c
+\item This does mean that we optimize using -Og flag, and then save it as p. We compiled 
+the source files p1.c and p2.c into assembly language and linked them together. 
+\end{example}
+\item As a result of this optimization, two different source codes can generate the same assembly code.
+\item This is why reverse engineering can be challenging.
+\item Control flow in assembly language can be largely summarized by the following three principles.
+\begin{enumerate}
+\item Conditional jump
+\begin{example}
+\item CMP AX, BX; Compare the contents of registers AX and BX
+\item JE  Label; Jump to 'Label' if AX equals BX (JE stands for "Jump if Equal")
+\end{example}
+\item Conditional move
+\begin{example}
+\item CMP AX, BX; Compare the contents of registers AX and BX
+\item CMOVNE CX, DX; Move the value from DX to CX only if AX is not equal to BX
+\end{example}
+\item Indirect jump via jump tables
+\begin{example}
+\item movq \%rdx, \%rcx
+\item cmpq \$6, \%rdi \# x:6
+\item ja      .L8
+\item jmp \*.L4(,\%rdi, 8)
+\end{example}
+\end{enumerate}
+\end{itemize}
+\subsection*{Machine Procedures}
 
 
 \end{document}
