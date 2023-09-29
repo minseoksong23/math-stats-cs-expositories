@@ -1,0 +1,148 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{titlesec}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\centering\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+
+\title{Data Structure and Algorithm for Massive Dataset}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\maketitle
+\section*{Three ways to deal with massive dataset}
+\begin{enumerate}
+\item Dimensional reduction: the purpose is to minimize the loss of information.
+\item Compressed representation: present data in a compact form, but not necessarily predicated on the retainment 
+of information. i.e., it may prefer higher compression rates.
+\item Interpolation: only use discrete information of the distribution $f$. 
+This is useful since we do not have a full function $f$ available. Remember we 
+used finite element method in numerical PDE, and the right space of function to discuss
+ numerical stability etc was Sobolev space.
+\end{enumerate}
+\begin{itemize}
+\item All in all, it focuses on achieving lower computational/statistical complexity.
+\item To clarify, computational complexity deals with the resources(time and space), 
+while statistical complexity with the intricacy of models(in the sense of how simpler model represents reduced data). 
+\end{itemize}
+\begin{theorem} (Johnson-Lindenstrauss Lemma)
+Let $Q$ be a finite set of vectors in $\mathbb{R}^d$. Let $\delta\in (0,1)$ and $n$ be large enough integer such that
+\begin{equation}
+\epsilon = \sqrt{\frac{6\log (2\lvert Q\rvert/\delta)}n}\leq 3
+\end{equation}
+With probability of at least $1-\delta$ over a choice of a random matrix $W\in\mathbb{R}^{n,d}$
+ such that each element of $W$ is distributed normally with zero mean and variance of $1/n$ we have
+\begin{equation}
+\sup_{x\in\mathbb{Q}}\lvert \frac{\lVert Wx\rVert^2}{\lVert x\rVert^2}-1\rvert < \epsilon
+\end{equation}
+\end{theorem}
+\begin{itemize}
+\item The proof leans on the following lemma, which uses the concentration property of $\chi^2$.
+\end{itemize}
+\begin{lemma}\label{lem:concentration}
+Fix some $x\in\mathbb{R}^d$. Let $W\in\mathbb{R}^{n,d}$ be a random matrix such that each $W_{i,j}$
+ is an independent normal random variable. Then, for every $\epsilon\in (0,3)$ we have
+ \begin{equation}
+ \mathbb{P}[\lvert \frac{\lVert (1/\sqrt n)Wx\rVert}{\lVert 
+    x\rVert}-1 \rvert>\epsilon]\leq 2e^{-\epsilon^2 n/6}
+ \end{equation}
+\end{lemma}
+\begin{itemize}
+\item Note that $W:\mathbb{R}^d\to\mathbb{R}^n$, and the result does not depend on d. This suggests
+ that we can conduct dimensionality reduction in very high-dimensional spaces without much cost(!).
+\end{itemize}
+\begin{proof}[Proof of Lemma~\ref{lem:concentration}]
+We can assume, WLOG, that $\lVert x\rVert^2=1$. Do note that $\lVert Wx\rVert^2$ has a $\chi_n^2$ distribution
+ by construction, so we may use concentration of $\chi^2$ inequality to get the result.
+\end{proof}
+\begin{proof}
+In order to deal with $\lvert Q\rvert$, use the union bound. We can find appropriate $\epsilon$ afterward.
+\end{proof}
+\begin{itemize}
+\item This says that the random projections do not distort Euclidean distances too much.
+\end{itemize}
+\subsection*{PCA}
+We aim at solving the problem 
+\[
+\arg\min_{W\in\mathbb{R}^{n,d}, U\in\mathbb{R^{d,n}}}\sum^m_{i=1}\lVert x_i-UWx_i\rVert^2_2
+\]
+\begin{itemize}
+\item It is shown that $W=U^T$ and $U$ is orthonormal.
+\item It is then shown that the optimal solution is caculated by computing the eigenvectors of $A=\sum^m_{i=1}x_ix_i^T=X^TX$. 
+This is the right eigenvectors of SVD. Do note that $x_i$ is each column of $X$.
+\item This means the complexity is given by $O(d^3+md^2)$
+\begin{enumerate}
+\item $O(d^3)$ for computing the eigenvectors and eigenvalues of $A$.
+\item $O(d^2 m)$ for computing the covariance matrix $A$.
+\end{enumerate}
+\item Instead of using $XX^T$, we can use the eigenvector of $X^TX$, that is, 
+$A(X^Tu)=\lambda(X^T u)$ where $u$ is an eigenvector of $B$.
+\item This comes from the fact that $X^T XX^T u=\lambda X^T u$.
+\item Do note that $B$ only requires inner products $\langle x_i,x_j\rangle$.
+\item This reduces our complexity to $O(m^3+dm^2)$, which is useful when d is very large.
+\end{itemize}
+\subsection*{Compressed Sensing}
+\begin{definition}
+A matrix $W\in \mathbb{R}^{n,d}$ is $(\epsilon, s)-RIP$ if for all $x\neq 0$ s.t. $\lVert x\rVert_0\leq s$
+ we have 
+ \[
+|\frac{\lVert Wx\rVert^2_2}{\lVert x\rVert^2_2}-1|\leq \epsilon
+ \]
+\end{definition}
+\begin{itemize}
+\item A particular theorem states that if $W$ is an RIP (Restricted Isometry Property) matrix, 
+then under certain conditions, the expression $\underset{v:Wv=Wx}{\arg\min} \lVert v\rVert_0$ evaluates to $x$. 
+This implies that, for specific compression matrices and sparse data, the original data 
+can be accurately recovered.
+\item Other theorems deal with $L^1$; it's because we are looking for
+ solutions that are "almost sparse" rather than strictly sparse.
+\end{itemize}
+\end{document}

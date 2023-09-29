@@ -1,8 +1,13 @@
-\documentclass{article}
-\usepackage[hyphens,spaces,obeyspaces]{url}
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{graphicx}
+\usepackage{enumerate}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -10,8 +15,9 @@
 \usepackage{mathabx}
 \usepackage{amsfonts}
 \usepackage{enumitem}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{hyperref}
+
+
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
@@ -37,7 +43,7 @@
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
 
-\title{Inequalities}
+\title{Inqualities}
 \author{MinSeok Song}
 \date{}
 \usepackage{pgfplots}
@@ -50,14 +56,72 @@ Start with $P(Z\geq a)\leq \frac{E(Z)}a$\\
 It follows that $P(Z>1-a)\geq \frac{\mu-(1-a)}a$. The idea is that if you know that $Z$ is less than or equal to 1, then you use Markov inequality to $1-Z$; then we get the opposite inequality direction from Markov inequality. 
 
 \subsection*{Hoeffding's inequality}
-Assume that $Z_i$'s are i.i.d. samples and $P[a\leq Z_i\leq b]=1$ for every $i$. Further let us say $E(Z_i)=\mu$. Then we have $P(\bar Z-\mu)\leq 2\exp(\frac{-2m\epsilon^2}){(b-a)^2}$.
+Assume that $Z_i$'s are i.i.d. samples and $P[a\leq Z_i\leq b]=1$ for every $i$. Further let us say $E(Z_i)=\mu$. Then we have $P(\bar Z-\mu)\leq 2\exp(\frac{-2m\epsilon^2}{(b-a)^2})$.
 \begin{remark}
 Hoeffding's inequality provides a decay rate of deviation (it is exponentially fast). 
 \end{remark}
+\begin{proof}
+This follows directly from (after taking exponential on both sides and using Markov inequality) Heoffding's Lemma, which states that
+\[
+\mathbb{E}[e^{\lambda X}]\leq e^{\frac{\lambda^2(b-a)^2}8}
+\]
+\end{proof}
+\begin{itemize}
+\item Proof of Hoeffding's Lemma: use the convexity of exponential, then use the fact that $b>a$ and $\mathbb{E}(X)=0$ in the assumption.
+\end{itemize}
 
 \subsection*{Central limit theorem}
 Central limit theorem states that $\sqrt n(\bar{X_n}-\mu)$ converges in distribution to $\mathcal{N}(0,\sigma^2)$
 \begin{remark}
 CLT gives the rate of convergence of law of large number, which is $\frac{1}{\sqrt{n}}$.
+\end{remark}
+\begin{itemize}
+\item We can relax this to mutually independent random variables. 
+\item Some variations:
+\begin{enumerate}
+\item Lyapunov CLT: this applies for when we do not necessarily have the identical distributions.
+ Some conditions have to be met.
+\item Martingale CLT
+\item Levy's convergence theorem
+\end{enumerate}
+\end{itemize}
+
+\subsection*{Chernoff Bound}
+Let $X=\sum^n_{i=1}X_i$, where $X_i$'s all being Bernoulli($p_i$) iid. Let $\mu=\mathbb{E}(X)=\sum^n_{i=1}p_i$.
+ Then we have
+\begin{equation}
+\mathbb{P}(X\geq (1+\delta)\mu)\leq e^{\frac{-\delta^2}{2+\delta}\mu}\text{ for all }\delta>0
+\end{equation}
+\begin{equation}
+\mathbb{P}(X\leq (1-\delta)\mu)\leq e^{-\mu\delta^2/2}\text{ for all }0<\delta<1
+\end{equation}
+
+\subsection*{Generic Chernoff Bound}
+\begin{equation}
+\mathbb{P} \left(X \geq a\right) \leq \inf_{t > 0} M(t) e^{-t a} \qquad (t > 0)
+\end{equation}
+\begin{equation}
+\mathbb{P} (X\leq a) \leq \inf_{t<0} M(t) e^{-t a} \qquad (t < 0)
+\end{equation}
+where $M(t)=\mathbb{E}(e^{-ta})$
+\begin{remark}
+\begin{itemize}
+\item Markov inequality is the best we hope for, given no other information. The idea being that we use Markov inequality, along with the moment generating function, which is already known.
+\item This explains that the probability of "bad event" is very low.
+\item The real power of the Chernoff bound is when we apply to the sum of independent random variables.
+ Chernoff bound gives an exponentially decreasing bound on the probability of $X$ deviating from its expectation.
+\item Another advantage is that we can use this regardless of the sign.
+\end{itemize}
+\end{remark}
+\subsection*{Concentration of $\chi^2$ Variables}
+Let $Z \sim\chi_k^2$. Then, for all $\epsilon\in (0,3)$ we have
+\[
+\mathbb{P}[(1-\epsilon)k\leq Z\leq (1+\epsilon)k]\geq 1-2e^{-\epsilon^2k/6}
+\]
+\begin{remark}
+\begin{itemize}
+\item With small $\epsilon$ and reasonably small $k$, we have a decent chance 
+that $\chi^2$ is aronud its mean.
+\end{itemize}
 \end{remark}
 \end{document}
