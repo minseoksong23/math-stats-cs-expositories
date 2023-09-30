@@ -129,7 +129,7 @@ Itanium(64-bit architecture developed by Intel, didn't see wide adoption compare
 \item (\%rdx, \%rcx) means to add the address \%rdx with \%rcx.
 \item (\%rdx,\%rcx,4) means to add the address of \%rdx with four times the address of \%rcx.
 \end{itemize}
-\item Some Syntax for x86-64 architecture
+\item Some instructions for x86-64 architecture
 \begin{enumerate}
 \item movq: simply just moving; q stands for quadword (64bits, versus 8 bits for byte, 16 bits for word, and so on), meaning that this operates on a 64-bit quadword operand.
 \begin{example}
@@ -196,6 +196,41 @@ the source files p1.c and p2.c into assembly language and linked them together.
 \end{enumerate}
 \end{itemize}
 \subsection*{Machine Procedures}
+\begin{itemize}
+\item ABI: a set of conventions about the register.
+\item There are three aspects: passing control, passing data, and memory management.
+\item Passing control
+\begin{enumerate}
+\item 'call' instruction is used to initiate a subroutine; addresses control.
+\item \%rsp stores the address of the top of the call stack.
+\item When a function is called, the return address (the address of the instruction immediately 
+following the function call) is pushed onto the stack. 
+\end{enumerate}
+\item Passing data
+\begin{enumerate}
+\item We pass the first six data onto register \%rdi, \%rsi, .., \%r9, (in this order, by convention)
+ and move over to stack after sixth argument.
+ \item Return value is stored in \%rax.
+\end{enumerate}
+\item Memory management
+\begin{enumerate}
+\item The usage of \%rbp is optional - we usually know how much we "step back" by the amount of memories we need to deallocate.
+\end{enumerate}
+\item There are two register saving conventions
+\begin{enumerate}
+\item Caller-Saved Registers: Before making a function call, the caller 
+is responsible for saving the current values of these registers 
+if they need to be preserved. After the function call returns, 
+the caller can restore the values if necessary. Examples 
+of caller-saved registers include: \%rax, \%rdi, \%rsi, ..., \%r11.
 
+\item Callee-Saved Registers: When a function is called (i.e., 
+the callee), it's the function's responsibility to save the current 
+values of these registers if it intends to
+ use them. Before returning, 
+the function restores their original values. Examples of callee-saved 
+registers are: \%rbx, \%r12, \%r13, \%r14, \%rbp, \%rsp.
+\end{enumerate}
+\end{itemize}
 
 \end{document}
