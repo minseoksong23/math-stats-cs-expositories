@@ -13,7 +13,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{float}
-\graphicspath{ {./images/} }
+\usepackage[top=1in, bottom=1in, left=0.75in, right=0.75in]{geometry}
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
 \usetikzlibrary{decorations.markings}
@@ -35,6 +35,7 @@
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{conjecture}{Conjecture}
 \newtheorem{definition}{Definition}
+\newtheorem{fact}{Fact}
 \theoremstyle{remark}
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
@@ -51,7 +52,6 @@
 \pgfplotsset{compat=1.18}
 
 \begin{document}
-
 \maketitle
 
 \bigsection{Algorithmic paradigm}
@@ -125,7 +125,26 @@
     \EndFunction
     \end{algorithmic}
 \end{algorithm}
+\item Shell Sort: pseudocode is as follows.
+\begin{verbatim}
+Algorithm ShellSort(A: array of items, N: size of array)
+Begin
+void shellsort(int v[], int n){
+    int gap, i, j, temp;
 
+    for (gap = n/2; gap > 0; gap /= 2)
+        for (i = gap; i < n; i++)
+            for (j=i-gap; j>=0 && v[j]>v[j+gap]; j-=gap){
+                temp = v[j];
+                v[j] = v[j+gap];
+                v[j+gap] = temp;
+            }
+}
+End
+\end{verbatim}
+The idea is to do the insertion sort with a sequence of gaps, starting from something larger. For larger arrays, this can result in efficient algorithm.
+
+It takes $\Theta(n^{1.25})$ in average.
 \end{itemize}
 \end{example}
 
@@ -198,7 +217,12 @@ margin.
 
 \section*{Logistic Regression}
 \begin{definition}
-Fit the logistic function $\phi_{sig}(x)=\frac 1{1+exp(-\langle w,x\rangle)}$ with minimization scheme $w=argmin_{w\in\mathbb{R}^d} \frac 1m\sum^m_{i=1} \log(1+exp(-y_i\langle w,x_i\rangle))$.
+Fit the logistic function $\phi_{sig}(x)=\frac 1{1+exp(-\langle w,x\rangle)}$
+ with minimization scheme 
+\[
+w=argmin_{w\in\mathbb{R}^d} \frac 1m\sum^m_{i=1}
+\log(1+exp(-y_i\langle w,x_i\rangle))
+\]
 \end{definition}
 \begin{remark}
 \begin{itemize}
@@ -276,10 +300,10 @@ Let $g_l(z)=f(z\vert y,\theta_l)$. We have
 \end{proof}
 \begin{itemize}
 \item This shows that likelihood function is non-decreasing for each iteration, and since likelihood is always bounded by 1, we have established the convergence
-    of the algorithm.
-    \item GMM algorithm is a specific instance of this algorithm. Here, $w_{ik}$ can be thought of as latent variable, 
-    corresponding to E-step, and computing $\theta$ and $\pi$ corresponds to M-step.
-    \item E-step can be computationally expensive and so we usually use Monte-Carlo method to approximate.
+of the algorithm.
+\item GMM algorithm is a specific instance of this algorithm. Here, $w_{ik}$ can be thought of as latent variable, 
+corresponding to E-step, and computing $\theta$ and $\pi$ corresponds to M-step.
+\item E-step can be computationally expensive and so we usually use Monte-Carlo method to approximate.
 \end{itemize}
 \begin{remark}
 \begin{itemize}
@@ -296,12 +320,69 @@ By routine algebra (we need to use independence at some point), one can show tha
 and notice that the first term can be phrased as -$d_{KL}(g^*\| g)$, whence $g^*=g$ gives the optimization solution. 
 \end{proof}
 \begin{remark}
-    \begin{itemize}
-    \item The intuition is to average out the effect of $x_{-i}$ on log expected value in order to incorporate the independence between $g_i$'s. 
+\begin{itemize}
+\item The intuition is to average out the effect of $x_{-i}$ on log expected value in order to incorporate the independence between $g_i$'s. 
 \item This leads to the CAVI algorithm, which approximates the unnormalized target density $\tilde{f}$. After initialization, 
 updating $g_i$ will increase ELBO for each $i$, so may iterate until ELBO converges.
 \item The disadvantage is that it may be computationally expensive and accuracy might be not so good. 
-    \end{itemize}
+\end{itemize}
 \end{remark}
 
+\section*{ Use FFT for circulant matrix}
+\begin{algorithm}
+    \caption{Fast Fourier Transform (FFT) for Circulant Matrix Multiplication}
+    \begin{algorithmic}[1] % [1] means showing line numbers
+    
+    \State \textbf{input:} Circulant matrix $A \in \mathbb{R}^{n \times n}$, vector $x \in \mathbb{R}^n$
+        
+    \State Compute the FFT of the first column of $A$, denote it as $A_{FFT}$
+    
+    \State Compute the FFT of vector $x$, denote it as $x_{FFT}$
+    
+    \State Perform the Hadamard (element-wise) product of $A_{FFT}$ and $x_{FFT}$ to get the result vector $y_{FFT}$
+    
+    \State Compute the inverse FFT of $y_{FFT}$ to get the final result vector $y$
+    
+    \State \Return $y$
+    
+    \end{algorithmic}
+    \end{algorithm}
+    
+\begin{itemize}
+\item The time complexity is $O(n\log n)$ (versus the usual $O(n^2)$).
+\item proof: 
+\[
+Cx=c_1 * x=IFFT(FFT(c_1)\circ FFT(x))
+\]
+where * is a circular convolution and $\circ$ is a hadamard product.
+\begin{fact}
+\[
+\mathcal{F}\{x\cdot y\}
+\]
+is a circular convolution of $\mathcal{F}\{x\}$ and $\mathcal{F}\{y\}$.
+\begin{example}
+Set \( x = y = \begin{bmatrix}
+    0 \\
+    1 \\
+    2 \\
+    \end{bmatrix}.
+     \)
+The equality, at least for the first element, yields since
+\[
+3 + 2\exp\left(\frac{-2\pi i}{3}\right) + 2\exp\left(-\frac{-4\pi i}{3}\right) = 9 = 1 + 4 + 4
+\]
+\end{example}
+\end{fact}
+\begin{fact}
+The inverse transform is given by
+\[
+x_n=\frac 1N \sum\limits^{N-1}_{k=0}X_k\cdot \exp(\frac{i2\pi}N kn)
+\]
+\end{fact}
+\item This shows how the vector is decomposed with basis in frequency domain.
+\item This is the analogous transform of Fourier 
+Series (for a regular periodic function) and Fourier transform 
+(for a regular non-periodic function).
+\item The essence of the theorem is the interchange between multiplication and convolution.
+\end{itemize}
 \end{document}
