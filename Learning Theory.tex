@@ -1,8 +1,12 @@
-\documentclass{article}
-\usepackage[hyphens,spaces,obeyspaces]{url}
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
-\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{titlesec}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -12,18 +16,19 @@
 \usepackage{enumitem}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{hyperref}
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
 \usetikzlibrary{decorations.markings}
 \usetikzlibrary{backgrounds}
 \pgfplotsset{every axis/.append style={
-                    axis x line=middle,    % put the x axis in the middle
-                    axis y line=middle,    % put the y axis in the middle
-                    axis line style={<->,color=blue}, % arrows on the axis
-                    xlabel={$},          % default put x on x-axis
-                    ylabel={$},          % default put y on y-axis
-            }}
+axis x line=middle,    % put the x axis in the middle
+axis y line=middle,    % put the y axis in the middle
+axis line style={<->,color=blue}, % arrows on the axis
+xlabel={$},          % default put x on x-axis
+ylabel={$},          % default put y on y-axis
+}}
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
 
@@ -46,43 +51,63 @@
 \maketitle
 Overfitting is a central challenge in machine learning and statistical modeling. This phenomenon can be viewed from multiple perspectives.
 \begin{proposition}
-For a fixed $x$, assume there exists a distribution for $f_k(x)$, representing a distribution over all training sets. Given that the data arises from the model $Y=f(x)+\epsilon$, where the expected value of $\epsilon$ is 0, we have:
-\[E((Y-f_k(x))^2) = \sigma^2 + \text{Bias}(f_k)^2 + \text{Var}(f_k(x))\]
+For a fixed $x$, assume there exists a distribution for 
+$f_k(x)$, representing a distribution over all training sets. 
+Given that the data arises from the model $Y=f(X)+\epsilon$, 
+where the expected value of $\epsilon$ is 0, we have:
+\[E((Y-f_k(x))^2) = \sigma^2 + \text{Bias}(f_k(x))^2 + \text{Var}(f_k(x))\]
 \end{proposition}
 \begin{remark}
 \begin{itemize}
-    \item $\sigma$ is an irreducible error: this is the noise inherent in any real-world data collection process, which cannot be removed or reduced.
-    
-    \item The expected value is taken for a distribution over all training sets.
-    
-    \item The mean square error loss here is usually used in regression problems; in general, we may use different loss functions and consequently different decompositions. This decomposition specifically focuses on the bias and variance in the context of mean squared error, but the principle applies more broadly to the trade-off between model flexibility and overfitting.
-    
-    \item This is NOT the formulation of the trade-off per se. As we vary the feature space, the value of $E((Y-f_k(x))^2)$ also changes, typically showing a U-shape pattern. The U-shape represents the trade-off between bias and variance: as the complexity of the model increases (moving from left to right on the U-shape), bias typically decreases and variance increases.
-    
-    \item As for the general formulation of the bias-variance trade-off (in the context of learning theory), we have $L_\mathcal{D}(h_S)=\epsilon_{app}+\epsilon_{est}$ where $\epsilon_{app}=\min_{h\in\mathcal{H}}L_\mathcal{D}(h)$ and $\epsilon_{est}=L_\mathcal{D}(h_S)-\epsilon_{app}$. In this decomposition:
-    \begin{itemize}
-        \item \textbf{Bias ($\epsilon_{app}$)}: Measures the error due to the assumptions made by the model. It reflects how far off our model's predictions can be from the truth, even if we had infinite data.
-      
-        \item \textbf{Variance ($\epsilon_{est}$)}: Captures the model's sensitivity to the specificities of the training set. It measures how much our predictions would vary if we re-trained the model on different training data.
-    \end{itemize}
-    
-    \item More modern discussions involve the tradeoff between accuracy and interpretability. This topic is described in detail in this paper: \url{https://arxiv.org/pdf/2010.13764.pdf}
+\item Note that $\hat f$ follows the distribution of $X$ since 
+it's given by $x_1,\dots,x_m$ for example. How $\hat f$ is 
+independent of the new data is also self-explanatory, which is why 
+the nice cancellation happens in the proof.
+
+\item $\sigma$ is an irreducible error: this is the noise inherent in any real-world data collection process, which cannot be removed or reduced.
+
+\item The expected value is taken for a distribution over all training sets.
+
+\item The mean square error loss here is usually used in regression problems; in general, we may use different loss functions and consequently different decompositions. This decomposition specifically focuses on the bias and variance in the context of mean squared error, but the principle applies more broadly to the trade-off between model flexibility and overfitting.
+
+\item This is NOT the formulation of the trade-off per se. As we vary the feature space, the value of $E((Y-f_k(x))^2)$ also changes, typically showing a U-shape pattern. The U-shape represents the trade-off between bias and variance: as the complexity of the model increases (moving from left to right on the U-shape), bias typically decreases and variance increases.
+
+\begin{proof}
+Trick is to reverse engineer, and the remainder term will cancel. 
+\begin{align*}
+E_{X\sim \mathcal{D}}\left((Y-\hat f(x_0))^2|x=x_0\right) 
+&= E_{X\sim \mathcal{D}}\left((Y-f(x_0)+f(x_0)-\hat f(x_0))^2|X=x_0\right) \\
+&= E_{X\sim \mathcal{D}}\left((Y-f(x_0))^2+(f(x_0)-\hat f(x_0))^2|X=x_0\right) \\
+&= E_{X\sim \mathcal{D}}\left((Y-f(x_0))^2+(f(x_0)-E(\hat f(x_0)))^2+(E(\hat f(x_0))-\hat f(x_0))^2|X=x_0\right) \\
+&= \sigma^2 + \text{Bias}(f_k(x))^2 + \text{Var}(f_k(x))
+\end{align*}
+\end{proof}
+\item As for the general formulation of the bias-variance trade-off (in the context of learning theory), we have $L_\mathcal{D}(h_S)=\epsilon_{app}+\epsilon_{est}$ where $\epsilon_{app}=\min_{h\in\mathcal{H}}L_\mathcal{D}(h)$ and $\epsilon_{est}=L_\mathcal{D}(h_S)-\epsilon_{app}$. In this decomposition:
+\begin{itemize}
+\item \textbf{Bias ($\epsilon_{app}$)}: Measures the error due to the assumptions made by the model. It reflects how far off our model's predictions can be from the truth, even if we had infinite data.
+\item \textbf{Variance ($\epsilon_{est}$)}: Captures the model's sensitivity to the specificities of the training set. It measures how much our predictions would vary if we re-trained the model on different training data.
+\end{itemize}
+\item We can connect bias with approximation error (in the sense that 
+it's more about our model selection, anlytical limitation) while variance with estimation error.
+\item More modern discussions involve the tradeoff between accuracy and interpretability. This topic is described in detail in this paper: \url{https://arxiv.org/pdf/2010.13764.pdf}
 \end{itemize}
 \end{remark}
 
-\begin{proof}
-The detailed proof involves algebraic manipulations, available at:
-\url{https://stats.stackexchange.com/questions/204115/understanding-bias-variance
--tradeoff-derivation/354284#354284}
-\end{proof}
+\begin{definition}
+We say that a hypothesis class $\mathcal{H}$ is PAC learnable if there exists
+ a function $m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}$ and a learning algorithm
+  with PAC property.
+\end{definition}
 
 \begin{proposition}
-Given the Empirical Risk Minimization (ERM) chosen hypothesis $h_S = \text{argmin}_{h\in\mathcal{H}}L_{S}(h)$, the following holds:
+Given the Empirical Risk Minimization (ERM) chosen hypothesis 
+\[h_S = \text{argmin}_{h\in\mathcal{H}}L_{S}(h)
+\] the following holds:
 \begin{enumerate}
-    \item $\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \mathcal{D}^m\left(\bigcup_{h\in \mathcal{H}_B}\{S\mid_x:L_S(h)=0\}\right)$
-    
-    \item With the assumption of I.I.D. data:
-    \[\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \lvert \mathcal{H_B}\rvert e^{-\epsilon m} \leq \lvert \mathcal{H}\rvert e^{-\epsilon m}\]
+\item $\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \mathcal{D}^m\left(\bigcup_{h\in \mathcal{H}_B}\{S\mid_x:L_S(h)=0\}\right)$
+
+\item With the assumption of i.i.d.:
+\[\mathcal{D}^m\left(S\mid_x:L_{\mathcal{D}, f}(h_S)>\epsilon\right) \leq \lvert \mathcal{H_B}\rvert e^{-\epsilon m} \leq \lvert \mathcal{H}\rvert e^{-\epsilon m}\]
 \end{enumerate}
 \end{proposition}
 
@@ -111,127 +136,145 @@ with probability at least $1-\delta$ over an i.i.d. sample $S$ of size $m$, give
 \item A smaller $\epsilon$ or $\delta$ necessitates a larger $m$ ($\epsilon$ has a stronger effect), which makes sense.
 \item A larger hypothesis class also increases the value of $m$, demonstrating the problem of overfitting. This can be traced back to the necessity for $L_S(h)$ to hold for every possible $S$. However, it's crucial to note that this represents a worst-case scenario and might not be tight.
 \item Note that the finiteness of $\lvert \mathcal{H}\rvert$ is crucial here. We have PAC learnability for a finite $VC$ dimension in genral, though this is only a sufficient condition.
+\item As a quick reminder, notice the similarity to JL lemma, where we had $k\geq\Omega(\frac{\log N/\delta}{\epsilon^2})$
 \end{itemize}
 \end{remark}
 
 \begin{example}
-    Let \( h \) be defined as:
-    \[
-    h_{(a_1, b_1, a_2, b_2)}(x_1, x_2) = 
-    \begin{cases} 
-    1 & \text{if } a_1 \leq x_1 \leq b_1 \text{ and } a_2 \leq x_2 \leq b_2 \\
-    0 & \text{otherwise}
-    \end{cases}
-    \]
-    Consider the hypothesis class consisting of all axis-aligned rectangles in the plane.
-    An algorithm that returns the smallest rectangle enclosing all positive examples in the training set is an ERM. 
-    The realizability assumption is crucial here in order to guarantee that 0-labeled training sets are located outside of this rectangle. We can show that for $m\geq \frac{4\log(4/\delta)}\epsilon$, the PAC condition holds. 
-    \begin{itemize}
-    \item To establish the PAC condition, we cannot directly apply the previous corollary due to our hypothesis class being infinite. Instead, the proof requires a blend of geometric insights and probabilistic bounds. Our approach involves considering \( R(S) \subset R^* \) and the outer rectangles \( R_i \) for \( i = 1, 2, 3, 4 \), each with a measure \( D(R_i) = \frac{\epsilon}{4} \). While employ the exponential bounds, which gives an interpretable formula, and adhering to the realizability assumption; we focus on computing the probability that the squares \( R_i \) do not encompass any data points from the distribution.
-    \item This is guaranteed by the fundamental theorem of statistical learning; VC dimension is $4<\infty$.
-    \item We can generalize to d-dimensional space: we simply replace 4 with 2d.
-    \item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability 
-    from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
-    \end{itemize}
+Let \( h \) be defined as:
+\[
+h_{(a_1, b_1, a_2, b_2)}(x_1, x_2) = 
+\begin{cases} 
+1 & \text{if } a_1 \leq x_1 \leq b_1 \text{ and } a_2 \leq x_2 \leq b_2 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+Consider the hypothesis class consisting of all axis-aligned rectangles in the plane.
+An algorithm that returns the smallest rectangle enclosing all positive examples in the training set is an ERM. 
+The realizability assumption is crucial here in order to guarantee that 0-labeled training sets are located outside of this rectangle. We can show that for $m\geq \frac{4\log(4/\delta)}\epsilon$, the PAC condition holds. 
+\begin{itemize}
+\item To establish the PAC condition, we cannot directly apply the previous corollary due to our hypothesis class being infinite. Instead, the proof requires a blend of geometric insights and probabilistic bounds. Our approach involves considering \( R(S) \subset R^* \) and the outer rectangles \( R_i \) for \( i = 1, 2, 3, 4 \), each with a measure \( D(R_i) = \frac{\epsilon}{4} \). While employ the exponential bounds, which gives an interpretable formula, and adhering to the realizability assumption; we focus on computing the probability that the squares \( R_i \) do not encompass any data points from the distribution.
+\item This is guaranteed by the fundamental theorem of statistical learning; VC dimension is $4<\infty$.
+\item We can generalize to d-dimensional space: we simply replace 4 with 2d.
+\item For each dimension we find minimum and maximum value to construct the smallest enclosing rectangle, so the algorithm to return such a rectangle that ensures the above accuracy/probability 
+from above takes $O(md)=O(d^2\cdot\frac 1\epsilon\cdot \log(1/\delta))$
+\end{itemize}
 \end{example}
 \begin{example}
-    Consider the ERM rule defined such that whenever we encounter a value of \(1\) in our sample dataset, all subsequent values are assigned \(0\). To establish PAC learnability, assume \(P(x_+) > \epsilon\) and \(x_+ \neq S\). The probability that the learned hypothesis \(h_S\) misclassifies is given by 
-    \[ P(L_D(h_S)) \leq (1-\epsilon)^m \]
-    Following from this, the sample complexity needed for PAC learning can be bounded as:
-    \[ m_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{\log (1/\delta)}{\epsilon} \right\rceil \]
-    \end{example}
+Consider the ERM rule defined such that whenever we encounter a value of \(1\) in our sample dataset, all subsequent values are assigned \(0\). To establish PAC learnability, assume \(P(x_+) > \epsilon\) and \(x_+ \neq S\). The probability that the learned hypothesis \(h_S\) misclassifies is given by 
+\[ P(L_D(h_S)) \leq (1-\epsilon)^m \]
+Following from this, the sample complexity needed for PAC learning can be bounded as:
+\[ m_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{\log (1/\delta)}{\epsilon} \right\rceil \]
+\end{example}
 
-    \begin{example}
-    As for minimizing the risk, we note that for binary classification problem, Bayes classifier is optimal. To show this, we need to prove that $$P(f(X)\neq Y\vert X=x)-P(t(X)\neq Y\vert X=x)\geq 0$$ where $t(x)=1$ if $P(Y=1\vert X=x)\geq 1/2$ and -1 otherwise. We can 
-    do this by showing that $$P(f(X)\neq\vert X=x)=(1-2P(Y=1\vert X=x))1_{f(x)=1}+P(Y=1\vert X=x)$$ and $$P(t(x)\neq Y\vert X=x)=min(P(Y=1\vert X=x), P(Y=-1\vert X=x))$$
-    \end{example}
+\begin{example}
+As for minimizing the risk, we note that for binary classification problem, Bayes classifier is optimal. To show this, we need to prove that $$P(f(X)\neq Y\vert X=x)-P(t(X)\neq Y\vert X=x)\geq 0$$ where $t(x)=1$ if $P(Y=1\vert X=x)\geq 1/2$ and -1 otherwise. We can 
+do this by showing that $$P(f(X)\neq\vert X=x)=(1-2P(Y=1\vert X=x))1_{f(x)=1}+P(Y=1\vert X=x)$$ and $$P(t(x)\neq Y\vert X=x)=min(P(Y=1\vert X=x), P(Y=-1\vert X=x))$$
+\end{example}
 
-    \begin{example}
-        We can define learnability of two-oracle model as a generalization by taking $\mathcal{D}^+(A)=\mathcal{D}(A)/\mathcal{D}(\mathcal{X}^+)$. Learnability of one-model oracle model implies the learnability of two-model oracle model. The key step is to define $\mathcal{D}'(E)=\frac 12\mathcal{D}^+(E)+\frac 12\mathcal{D}^-(E)$.
+\begin{example}
+We can define learnability of two-oracle model as a generalization by taking $\mathcal{D}^+(A)=\mathcal{D}(A)/\mathcal{D}(\mathcal{X}^+)$. Learnability of one-model oracle model implies the learnability of two-model oracle model. The key step is to define $\mathcal{D}'(E)=\frac 12\mathcal{D}^+(E)+\frac 12\mathcal{D}^-(E)$.
 
-        One can also show that if $h^+,h^-\in \mathcal{H}$, then learnability of two-oracle model implies that of one-oracle model.
-        \end{example}
+One can also show that if $h^+,h^-\in \mathcal{H}$, then learnability of two-oracle model implies that of one-oracle model.
+\end{example}
 
-    $\ast$ What's the issue of ERM? The performance of Empirical Risk Minimization is highly dependent on the training set, so there might well be hypothesis in our hypothesis class
-     that does extremely well on untrained data, even though it does not achieve 0 empirical loss.
+$\ast$ What's the issue of ERM? The performance of Empirical Risk Minimization is highly dependent on the training set, so there might well be hypothesis in our hypothesis class
+that does extremely well on untrained data, even though it does not achieve 0 empirical loss.
 
-    \subsubsection*{Generalization}
+\subsubsection*{Generalization}
 
-    We propose three key ideas to further generalize the learning paradigm:
+We propose three key ideas to further generalize the learning paradigm:
 
-    \begin{enumerate}
-        \item \textbf{Joint Distribution Assumption:} 
-        Instead of treating the input \(x\) in isolation with \(x \sim \mathcal{D}\), both the input \(x\) and the output \(y\) are assumed to be drawn from a joint distribution, denoted as \((x,y) \sim \mathcal{D}\).
-    
-        \item \textbf{Agnostic Learnability:}
-        Moving beyond the traditional realizability assumption, we introduce the concept of \textit{agnostic learnability}. The criterion for learnability in this context is:
-        \[
-        L_\mathcal{D}(h) \leq \min_{h' \in \mathcal{H}} L_\mathcal{D}(h') + \epsilon
-        \]
-        Here, \(L_\mathcal{D}(h)\) represents the expected loss of hypothesis \(h\) under distribution \(\mathcal{D}\).
-    
-        \item \textbf{Generalized Loss Function:}
-        The loss function for our hypothesis can be extended as:
-        \[
-        L_\mathcal{D}(h) = \mathbb{E}_{z \sim \mathcal{D}} [l(h, z)]
-        \]
-        The loss function \(l(h,z)\) in prior discussions was defined as a binary function: \(l(h,z) = 1\) if \(h(x) \neq y\) and \(0\) otherwise. This generalized approach permits a broader range of definitions. The empirical loss for a sample set \(S\) is:
-        \[
-        L_S(h) = \frac{1}{m} \sum_{i=1}^{m} l(h, z_i)
-        \]
-        As an exemplar, the quadratic loss function can be expressed as:
-        \[
-        l(h, (x,y)) = (h(x) - y)^2
-        \]
-    \end{enumerate}
-    
-    These ideas enable a more flexible framework, suitable for addressing a diverse set of problems and loss functions in machine learning.
+\begin{enumerate}
+\item \textbf{Joint Distribution Assumption:} 
+Instead of treating the input \(x\) in isolation with \(x \sim \mathcal{D}\), both the input \(x\) and the output \(y\) are assumed to be drawn from a joint distribution, denoted as \((x,y) \sim \mathcal{D}\).
 
-    $\diamond$ To further elaborate on the idea of 'relaxation' we can introduce the concept of uniform convergence to get a sufficient condition for agnostic learnability.
+\item \textbf{Agnostic Learnability:}
+Moving beyond the traditional realizability assumption, we introduce the concept of \textit{agnostic learnability}. The criterion for learnability in this context is:
+\[
+L_\mathcal{D}(h) \leq \min_{h' \in \mathcal{H}} L_\mathcal{D}(h') + \epsilon
+\]
+Here, \(L_\mathcal{D}(h)\) represents the expected loss of hypothesis \(h\) under distribution \(\mathcal{D}\).
 
-    \begin{proposition}
-    If a class $\mathcal{H}$ has the uniform convergence property with a function $m^{UC}_{\mathcal{H}}$ then the class is agnostically
-     PAC learnable with the sample complexity $m_{\mathcal{H}}(\epsilon,\delta)\leq m^{UC}_{\mathcal{H}}(\epsilon/2,\delta)$. Furthermore, in that case, the $ERM_{\mathcal{H}}$ paradigm is a successful 
-     agnostic PAC learner for $\mathcal{H}$.
-    \end{proposition}
-    \begin{proposition}
-    Uniform convergence is sufficient and necessary condition for PAC learnability (but only sufficient for agnostic learnability).
-    \end{proposition}
+\item \textbf{Generalized Loss Function:}
+The loss function for our hypothesis can be extended as:
+\[
+L_\mathcal{D}(h) = \mathbb{E}_{z \sim \mathcal{D}} [l(h, z)]
+\]
+The loss function \(l(h,z)\) in prior discussions was defined as a binary function: \(l(h,z) = 1\) if \(h(x) \neq y\) and \(0\) otherwise. This generalized approach allows for broader range of definitions. The empirical loss for a sample set \(S\) is:
+\[
+L_S(h) = \frac{1}{m} \sum_{i=1}^{m} l(h, z_i)
+\]
+As an exemplar, the quadratic loss function can be expressed as:
+\[
+l(h, (x,y)) = (h(x) - y)^2
+\]
+\end{enumerate}
 
-    \begin{theorem}
-    (No-Free-Lunch) Let A be a learning algorithm for binary classification for 0-1 loss. Let m be any number smaller than $\lvert\mathcal{X}\vert/2$. There exists 
-    a distribution $\mathcal{D}$ over $\mathcal{X}\times\{0,1\}$ such that 
-    \begin{enumerate}
-    \item There exists a classifying function $f$ with $L_\mathcal{D}(f)=0$.
-    \item With probability of at least 1/7 over the choice of $S\sim \mathcal{D}^m$ we have that $L_{\mathcal{D}}(A(S))\geq 1/8$.
-    \end{enumerate}
-    \end{theorem}
-    \begin{remark}
-    \begin{itemize}
-    \item In order to prove this, it suffices to show that $\max_{i\in[T]} E_{S\sim\mathcal{D}^m}[L_\mathcal{D}(A(S))]\geq 1/4$
-    \item The idea of the proof is to use uniform distribution $\mathcal{D}_i$ induced by $f_i$. Since we are saying that no particular algorithm always works, it makes sense to use uniformity.
-    \item The algebraic manipulation in the proof used the idea of max$>$average$>$min. The NFL theorem makes the profound
-     statment that while some algorithms may shine brilliantly in some scenarios and fail miserably in others, on average, they all even out; so the 
-     algebra goes along with this philosophy.
-     \item We can generalize this by substituting $\frac 14$ with $\frac 12-\frac 1{2k}$ and $2m$ with $km$ (using $p\geq (k-1)m$ instead of $p\geq m$, we have $\frac 1{km}\geq (1-\frac 1k)\frac 1p$).
-    \end{itemize}
-    \end{remark}
-    \begin{corollary}
-    Let $\mathcal{X}$ be an infinite domain set and let $\mathcal{H}$ be the set of all functions from $\mathcal{X}$ to $\{0,1\}$. Then $\mathcal{H}$ is not PAC learnable.
-    \end{corollary}
-    \subsection*{Dealing with infinite Hypothesis}
-    Even in cases where the hypothesis class is of infinite size, such as with rectangles or concentric circles, PAC learnability can still be achieved. This leads 
-    us to introduce the notion of the VC dimension, which pertains specifically to a given hypothesis class.
+These ideas enable a more flexible framework, suitable for addressing a diverse set of problems and loss functions in machine learning.
 
-     $\ast$ It's worth noting that in many instances, the VC dimension equates to the number of parameters that define the hypothesis class.
+$\diamond$ To further elaborate on the idea of 'relaxation' we can introduce the concept of uniform convergence to get a sufficient condition for agnostic learnability.
 
-     NFL theorem implies that a class of infinite VC-dimension is not PAC learnable. In other words, there is no universal algorithm 
-     that solves every problem ("different distribution, think how linear/nonlinear data affects our choice of model") when VC dimension is infinite.
+\begin{proposition}
+If a class $\mathcal{H}$ has the uniform convergence property with a function $m^{UC}_{\mathcal{H}}$ then the class is agnostically
+PAC learnable with the sample complexity $m_{\mathcal{H}}(\epsilon,\delta)\leq m^{UC}_{\mathcal{H}}(\epsilon/2,\delta)$. Furthermore, in that case, the $ERM_{\mathcal{H}}$ paradigm is a successful 
+agnostic PAC learner for $\mathcal{H}$.
+\end{proposition}
+\begin{proposition}
+Uniform convergence is sufficient and necessary condition for PAC learnability (but only sufficient for agnostic learnability).
+\end{proposition}
 
-     \begin{theorem}[Sauer's Lemma]
-     Let $\mathcal{H}$ be a hypothesis class with VC dimension $\leq d<\infty$. Then for all $m$, $\tau_\mathcal{H}(m)\leq\sum^d_{i=0}\binom{m}i$. In particular, if $m>d+1$ then $\tau_\mathcal{H}(m)\leq (em/d)^d$, where $\tau_\mathcal{H}$ is a growth function.
-     \end{theorem}
-     \begin{proof}
-     It suffices to show that for every $\mathcal{H}$, $\lvert \mathcal{H}_\mathcal{C}\rvert\leq\vert\{B\subset \mathcal{C}:\mathcal{H}\text{ shatters }B\}\vert$
-     \end{proof}
+\begin{theorem}
+(No-Free-Lunch) Let A be a learning algorithm for binary classification for 0-1 loss. Let m be any number smaller than $\lvert\mathcal{X}\vert/2$. There exists 
+a distribution $\mathcal{D}$ over $\mathcal{X}\times\{0,1\}$ such that 
+\begin{enumerate}
+\item We have $L_\mathcal{D}(f)=0$ for some classifying function $f:\mathcal{X}\to\{0,1\}$.
+\item With probability of at least 1/7, it holds that, over the
+ choice of $S\sim \mathcal{D}^m$ we have $L_{\mathcal{D}}(A(S))\geq 1/8$ (uncertainty on S).
+\end{enumerate}
+\end{theorem}
+\begin{remark}
+\begin{itemize}
+\item In order to prove this, it suffices to show that 
+\[
+\max_{i\in[T]} E_{S\sim\mathcal{D}^m}[L_\mathcal{D}(A(S))]\geq 1/4
+\]
+\item The idea of the proof is to use uniform distribution $\mathcal{D}_i$ induced by $f_i$. 
+\item Since we are saying that no particular algorithm always works, it makes sense to use uniformity.
+\item The algebraic manipulation in the proof used the idea of max$>average$>min. The NFL theorem makes the profound
+statment that while some algorithms may shine brilliantly in some scenarios and fail miserably in others, on average, they all even out; so the 
+algebra goes along with this philosophy.
+\item We can generalize this by substituting $\frac 14$ with $\frac 12-\frac 1{2k}$ and $2m$ with $km$ (using $p\geq (k-1)m$ instead of $p\geq m$, we have $\frac 1{km}\geq (1-\frac 1k)\frac 1p$).
+\end{itemize}
+\end{remark}
+\begin{corollary}
+Let $\mathcal{X}$ be an infinite domain set and let $\mathcal{H}$ be the set of all functions from $\mathcal{X}$ to $\{0,1\}$. Then $\mathcal{H}$ is not PAC learnable.
+\end{corollary}
+\subsection*{Dealing with infinite Hypothesis}
+Even in cases where the hypothesis class is of infinite size, such as with rectangles or concentric circles, PAC learnability can still be achieved. This leads 
+us to introduce the notion of the VC dimension, which pertains specifically to a given hypothesis class.
+
+$\ast$ It's worth noting that in many instances, the VC dimension equates to the number of parameters that define the hypothesis class.
+
+NFL theorem implies that a class of infinite VC-dimension is not PAC learnable. In other words, there is no universal algorithm 
+that solves every problem ("different distribution, think how linear/nonlinear data affects our choice of model") when VC dimension is infinite.
+
+\begin{theorem}[Sauer's Lemma]
+Let $\mathcal{H}$ be a hypothesis class with VC dimension $\leq d<\infty$. Then for all $m$, $\tau_\mathcal{H}(m)\leq\sum^d_{i=0}\binom{m}i$. In particular, if $m>d+1$ then $\tau_\mathcal{H}(m)\leq (em/d)^d$, where $\tau_\mathcal{H}$ is a growth function.
+\end{theorem}
+\begin{proof}
+It suffices to show that for every $\mathcal{H}$, $\lvert \mathcal{H}_\mathcal{C}\rvert\leq\vert\{B\subset \mathcal{C}:\mathcal{H}\text{ shatters }B\}\vert$
+\end{proof}
+
+\begin{theorem}[The fundamental theorem of PAC learning]
+Consider hypothesis class $\mathcal{H}:\mathcal{X}\to\{0,1\}$. TFAE
+\begin{enumerate}
+\item $\mathcal{H}$ has the uniform converrgence property.
+\item Any ERM rule is a successful agnostic PAC learner for $\mathcal{H}$.
+\item $\mathcal{H}$ is agnostic PAC learnable.
+\item $\mathcal{H}$ is PAC learnable.
+\item Any ERM rule is a successful PAC learner for $\mathcal{H}$.
+\item $\mathcal{H}$ has a finite VC-dimension.
+\end{enumerate}
+\end{theorem}
 \end{document}
