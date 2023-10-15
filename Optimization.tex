@@ -1,8 +1,12 @@
-\documentclass{article}
-\usepackage[hyphens,spaces,obeyspaces]{url}
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
-\usepackage{graphicx}
+\usepackage{titlesec}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -10,6 +14,9 @@
 \usepackage{mathabx}
 \usepackage{amsfonts}
 \usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
@@ -25,6 +32,7 @@
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
 
+\newtheorem{fact}{Fact}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -43,7 +51,90 @@
 \begin{document}
 
 \maketitle
-\section*{KKT}
+\section*{Some facts in Convex optimization}
+\begin{itemize}
+\item We have recurring theme, specifically certain inequalities, arising in convex optimization.
+\begin{fact}
+Let $S$ be an open convex set. A function $f:S\to\mathbb{R}$ is convex iff for every $w\in S$, 
+there exists $v$ such that 
+\[
+\forall u\in S, f(u)\geq f(w)+\langle u-w,v\rangle
+\]
+\end{fact}
+\begin{definition}
+A function $f$ is strongly convex on $S$, if $\exists m>0$ such that $\nabla^2 f\succeq mI$.
+
+In case $f$ is not differentiable, more general definition gives, $\forall w,u,$ and $\forall \alpha\in (0,1)$
+\[
+f(\alpha w+(1-\alpha)u)\leq \alpha f(w)+(1-\alpha)f(u)-\frac \lambda 2 \alpha(1-\alpha)\lVert w-u\rVert^2.
+\]
+\end{definition}
+\item This is a function that grows as fast as quadratic function.
+\item We can view $\lVert w-u\rVert$ as a "penalty" of the distance between $w$ and $u$.
+\begin{fact}
+If $f$ is $\lambda$-strongly convex then 
+\[
+\forall w,u, \exists v\in \partial f(w), \langle w-u,v\rangle\geq f(w)-f(u)+\frac \lambda 2\lVert w-u\rVert^2
+\]
+\end{fact}
+\begin{proof}
+$f(y)= f(x)+\nabla f(x)^T (y-x)+\frac 12(y-x)^T\nabla^2 f(z)(y-x)$ for some
+ $z$ on the segment $[x,y]$. By the definition of strong convexity, we have $\nabla^2 f(z)\succeq mI$.
+\end{proof}
+\section*{Gradient Descent, Stochastic Gradient Descent}
+\begin{fact}
+If $f$ is $\lambda$-strongly convex then $\forall w,u,$ and $v\in\partial f(w)$, we have 
+\[
+\langle w-u, v\rangle \geq f(w)-f(u)+\frac{\lambda}2\lVert w-u\rVert^2
+\]
+\end{fact}
+\begin{proof}
+Use the definition of strong convexity, along with subgradient.
+\end{proof}
+\item For this type of inequality in general, we use 1) the definition of convexity/strong convexity \& limiting argument as $\alpha\to 0$
+2) mean value theorem
+\begin{fact}
+Let $v_i$'s $i=1,\dots,T$ be arbitrary sequence of vectors (think of it as the direction of update).
+ Any algorithm with $w^{(1)}=0$ and the update rule of the form $w^{(t+1)}=w^{(t)}-\eta v_t$ satisfies
+ \[
+\sum\limits^T_{t=1}\langle w^{(t)}-w^*,v_t\rangle\leq\frac{\lVert w^*\rVert^2}{2\eta}+\frac{\eta}2\sum\limits^T_{t=1}\lVert v_t\rVert^2.
+\]
+\end{fact}
+\begin{enumerate}
+\item GD: appropriate for when the function is differentiable.
+\item SGD: even if the function is not differentiable, 
+we can use subgradient. With certain condition, convergence holds. 
+\item Two-step SGD: resolve the concern that the norm of w might increase by using projection.
+\item As a generalization, we could make $\eta$ depend on $t$, or in error analysis instead of using the average of $w^{t}$, 
+we can use the last few elements (other variants exist as well).
+\item Strong convexity: might achieve faster convergence.
+\item $\beta$-smooth: when we use loss function, instead of using Lipschitz
+ function, we can impose the condition of $\beta$-smoothness and have different convergence.
+\begin{enumerate}
+\item Assume that $(\cdot, z)l$ is convex, $\beta$-smooth, and nonnegative. Then
+\[
+\mathbb{E}[\mathcal{L}_{\mathcal{D}}(\bar w)]\leq \frac 1{1-\eta\beta}(\mathcal{L}_\mathcal{D}(w^*)+\frac{\lVert w^*\rVert^2}{2\eta T}).
+\]
+\item Note that we have a specific choice of $\eta=\frac 1{\beta(1+3/\epsilon)}$ in order to achieve $\epsilon$ error (specifically, $T\geq 12B^2\beta/\epsilon^2$).
+\item The point of $\beta$-smooth property of the function is the self-boundedness, i.e. $\lVert\nabla f(w)\rVert^2\leq 2\beta f(w)$, 
+with the additional condition that $l$ is nonnegative and convex
+: \href{chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.eecis.udel.edu/~xwu/class/ELEG867/Lecture9.pdf}{here}, we prove it by first observing 
+that 
+\[
+f(v)\leq f(w)+\nabla f(w)^T(v-w)+\frac{\beta}2 \lVert v-w\rVert^2.
+\]
+\end{enumerate}
+\end{enumerate}
+\item Some confusing notation and points: 
+\begin{enumerate}
+\item $f_t(\cdot)=l(\cdot, w^{(t)})$.
+\item $f(w)=\mathcal{L}_{\mathcal{D}}(w)=\mathbb{E}_{z\sim\mathcal{D}}[l(w,z)]$. 
+$l$ is a loss function and $\mathcal{L}$ is an expected loss.
+\item $f_t(w)$ is still a random variable since $w$ is random.
+\end{enumerate}
+\end{itemize}
+
+\section*{KKT theorem}
 \begin{theorem}
 Assume that functions $f_0,\dots,f_m,h_1,\dots,h_p$ are differentiable. We
  are trying to solve the optimization problem
