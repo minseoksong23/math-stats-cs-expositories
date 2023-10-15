@@ -42,6 +42,7 @@
 \theoremstyle{remark}
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
+\newtheorem{fact}{Fact}
 
 \title{Linear Algebra, Numerics}
 \author{MinSeok Song}
@@ -93,7 +94,7 @@ $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\do
 \end{itemize}
 \end{remark}
 
-\section{Pseudo Inverse, rank-r approximation}
+\section{Pseudo Inverse, rank}
 \begin{definition}
 Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defined as a matrix $X\in\mathbb{C}^{n\times m}$ satisfying
 \begin{itemize}
@@ -103,21 +104,49 @@ Moore-Penrose pseudo-inverse for a matrix $A\in \mathbb{C}^{m\times n}$ is defin
 \item $AXA=A$
 \end{itemize}
 \end{definition}
-\begin{remark}
 \begin{itemize}
-\item Uniqueness can be seen by computing $SVD$ and inverse each singular value, which is the most obvious thing to do.
+\item Uniqueness can be seen by computing $SVD$ and inverse each singular value, which is canonical.
 \item Geometrically, this is a least squares problem ($L^2$ norm): there exists a unique vector $x$ such that $Ax$ is closest to $b$.
-\item We can use different pseudo-inverse by using different norm, say $L^\infty$ norm.
-\item Related concept is rank-r approximation in Young-Eckart theorem. The key of the proof is by exploring the space spanned by the right
- singular vectors $v_1,\dots,v_{r+1}$ (and connecting it to kernel of B) and deriving contradiction from that (for example by dimensionality argument).
-\item Eckart-Young holds for any unitarily invariant norm. Intuitively, unitarily invariant norm is the one that "respects" the decomposition of SVD: proof can be found here: \url{https://cklixx.people.wm.edu/uinorm-note.pdf}
-\end{itemize}
+\item There is a generalization using different norm, for example $L^\infty$.
+\begin{theorem}[Eckhart-Young]
+Let $A=\sum\limits^{rank(A)}_{i=1}\sigma_iu_iv_i^*, \sigma_1\geq\dots\geq\sigma_{rank(A)}>0$.
+ Then $\arg\limits_X\min\limits_{rank(X)\leq r}\lVert A-X\rVert_2
+ =\sum\limits^r_{i=1}\sigma_iu_iv_i^*$. Furthermore, we have 
+\[
+\min\limits_{rank(X)\leq}\lVert A-X\rVert_2=\sigma_{r+1}
+\]
+\end{theorem}
+\begin{proof}
+The key of the proof is by exploring the space spanned by the right
+singular vectors $v_1,\dots,v_{r+1}$ (and connecting it to kernel 
+of B) and deriving contradiction from that (for example by 
+dimensionality argument).
+\end{proof}
+\begin{remark}
+Eckart-Young holds for any unitarily invariant norm. Intuitively, unitarily invariant norm is the one that "respects" the decomposition of SVD: proof can be found here: \url{https://cklixx.people.wm.edu/uinorm-note.pdf}
 \end{remark}
+\begin{fact}
+The dimension of row vector and column vector is same.
+\end{fact}
+\begin{proof}
+Decompose $A=BC$ where $B$ (m by k) consists of basis of column 
+vectors and $C$ (k by n) consists of coefficient for each column vector of $A$.
+ On the other hand, we can view each row of $A$ as linear 
+ combination of row of $C$ with $B$ giving the coefficients. 
+ This implies that $dim(rowsp(A))\leq dim(colsp(A))$. Apply the same
+  principle fo $A^T$ and we get the desired equality.
+\end{proof}
+\begin{fact}
+$dim(AB)\leq \min (dim(A), dim(B))$
+\end{fact}
+\end{itemize}
 
 \section{Condition number}
 \begin{definition}
-The absolute condition number of a problem $f$ is \\
-$\lim_{\epsilon\to 0^+}\sup_{\lVert\delta x\rVert\leq \epsilon} \frac{\frac{\lVert\delta f(x)\rVert}{\lVert f(x)\rVert}}{\frac{\lVert \delta x\rVert}{\lVert x\rVert}}$
+The absolute condition number of a problem $f$ is
+\[
+\kappa(f) = \lim_{{\epsilon \to 0^+}} \sup_{{\lVert\delta x\rVert \leq \epsilon}} \frac{\lVert\delta f(x)\rVert / \lVert f(x)\rVert}{\lVert \delta x\rVert / \lVert x\rVert}.
+\]
 \end{definition}
 \begin{itemize}
 \item Consider the invertible matrix $A$. Say $f(x):=A^{-1}x$. The condition number will be $\lVert A^{-1}\rVert\frac{\lVert x\rVert}{\lVert A^{-1}x\rVert}$. To eliminate the dependency, we 
@@ -166,7 +195,8 @@ We then have that
 {\lVert\Delta\mathbf{b}\rVert}{\lVert\mathbf{b}\rVert}\right)  }
 {1-\kappa(A)\dfrac{\lVert\Delta A\rVert}{\lVert A\rVert}}.
 \end{equation}
-\item As expected, condition number and the relative error of the matrix control the bound of relative error of $x$. The smaller, the better. 
+\item As expected, condition number and the relative error of the matrix control the bound of relative error of $x$. The smaller, the better.
+\item The rule of thumb here is fordward error $\lesssim$ condition number $\times$ backward error. 
 \item The condition involving $\kappa(A)$ is an upper bound of condition number. 
 \end{itemize}
 
@@ -217,14 +247,113 @@ x_+ & \text{if } d_+ < d_- \text{ or } (d_+ = d_- \text{ and } \text{lsb}(x_+) =
  case, since we do not have any restriction on the size of bits).
 \end{itemize}
 \section{Matrix decomposition}
+\subsection{SVD decomposition}
+\begin{itemize}
+\item The proof is brief and illustrative.
+\begin{proof}
+\begin{enumerate}
+\item Apply spectral theorem on $AA^T$. Then we get $A^T A=V\Lambda V^T
+=\sum\limits^n_{i=1}(\sigma_i)^2v_iv_i^T$.
+\item It follows that $A^T Av_i=(\sigma_i)^2v_i$.
+\item Put $u_i=\dfrac{Av_i}{\sigma_i}$.
+\item By construction, we have $U=AV\Sigma^{-1}$.
+\end{enumerate}
+\end{proof}
+\item The choice of $u_i$ comes from the fact that we know it is an 
+eigenvector of $AA^T$, so it has to be of form $Av_i$, and $\sigma_i$ is just 
+a normalizing factor.
+\item Time complexity is $O(mn^2)$ where $n<m$. Truncated SVD where 
+for getting the first k singular values takes $O(mnk)$.
+\item In practice, we would prefer randomized SVD.
+\end{itemize}
 \subsection{LU decomposition}
+\begin{itemize}
+\item We decompose by doing Gaussian elimination, resulting in $A=\Pi LU$.
+\item When $\Pi$ is an identity matrix, we get $A=LU$.
+\end{itemize}
 \subsection{LDU decomposition}
+\begin{itemize}
+\item From $LU$, we make the diagonal elements of L and U all 1's. 
+\item This makes it easier for us to take inverse of $LU$. 
+\end{itemize}
 \subsection{Cholesky factorization}
+\begin{itemize}
+\item Cholesky factorization gives $A=LL^T$ for Hermitian, positive-definite matrix.
+\item This is somewhat analogous to $x=(\sqrt x)^2$.
+\end{itemize}
 \subsection{QR decomposition}
+\begin{itemize}
+\item In the $A=QR$ decomposition, the matrix Q is an orthogonal matrix, 
+and the spanning set of the first k leading columns of K is same as
+ the space spanning by columns of $A$.
+\item In case $A$ is $m\times n$ dimensional and $A$ has rank $r$, we
+ can decompose
+\begin{enumerate}
+\item $m\times r$, $r\times n$ (this is a reduced form capturing the essence of $A$ in terms of its rank).
+\item $m\times n$, $n\times n$ (this is referred to as thin or reduced QR decomposition).
+\item $m\times m$, $m\times n$ (this is the full QR decomposition).
+\end{enumerate}
+\item The detail is canonical.
+\item There are several ways to compute: Gram-Schmidt process, Householder transformations,
+ and Givens rotations.
+\end{itemize}
+
 \subsection{Jordan Canonical form}
+\begin{itemize}
+\item We have 
+\[
+T^{-1}AT=J=
+\begin{pmatrix}
+  J_1 & & & 0 \\
+  & \ddots & & \vdots \\
+  & & J_k & \\
+  0 & \cdots & & J_n \\
+\end{pmatrix}
+\] where
+\[
+J_i = 
+\begin{pmatrix}
+  \lambda_i & 1 & & & 0 \\
+  & \lambda_i & 1 & & \vdots \\
+  & & \ddots & \ddots & \\
+  & & & \lambda_i & 1 \\
+  0 & \cdots & & & \lambda_i \\
+\end{pmatrix}
+\in \mathbb{C}^{n_i\times n_i}
+\]
+ called Jordan block.
+\item Jordan form is unique upto permutations of the blocks.
+\end{itemize}
 \subsection{Schur decomposition}
-
-
-
-
+\section{Tensor decomposition}
+\section{Error analysis, stability}
+\begin{definition}
+\begin{enumerate}
+\item Backward error is the smallest $\Delta x$ such that $f(x+\Delta x)=y^*$. 
+\item Forward error is $y^*-y$.
+\item Truncation error is the error incurred by Taylor polynomial. 
+\begin{itemize}
+\item Some intuition of why Taylor polynomial might not converge: the condition for which the error decreases as dimension increases is  
+\[
+  \lvert x-x_0\rvert<(n+1)\lvert\frac{f^{(n)}
+(\xi_{n-1})}{f^{(n+1)}(\xi_n)}
+\]
+but this might well limit to zero. One example given frequently is $e^{-1/x^2}$ around $0$ and $0$ on $0$, which grows very slowly 
+around $0$ (slower than any polynomial).
+\end{itemize}
+\item Roundoff error is the error caused by floating point approximation.
+\end{enumerate}
+\end{definition}
+\begin{itemize}
+\item Backward error is said to be stable if $\lvert\frac{\Delta x}{x}\rvert$ is small for every input $x$. 
+\item This is not practical; what if $y^*$ is not even in the range of $f$?
+\item An algorithm is said to be numerically stable (mixed forward-backward stability) if 
+for any $x\in X$, the computed $\hat y$ satisfies
+\[
+\hat y + \Delta y=f(x+\Delta x), \lvert \Delta x\rvert\leq \delta\lvert x\rvert, 
+\lvert \Delta y\lvert\leq\epsilon\lvert y\rvert.
+\]
+for small $\delta, \epsilon>0$.
+\item This says that our computed value is almost the right answer for almost the right data.
+\end{itemize}
 \end{document}
