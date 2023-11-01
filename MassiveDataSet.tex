@@ -15,7 +15,7 @@
 \usepackage{amsfonts}
 \usepackage{enumitem}
 \usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{algpseudocode}
 \usepackage{hyperref}
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
@@ -313,6 +313,9 @@ where $f:\mathbb{R}^m\to \mathbb{R}$ is an arbitrary function, $R:\mathbb{R}_+\t
 $\psi$ is a mapping from $\mathcal{X}$ to a Hilbert space.
 \begin{theorem}(Representer Theorem)
 $w=\sum^m_{i=1}\alpha_i\psi(x_i)$ for some $\alpha\in\mathbb{R}^m$ gives an optimal solution.
+\begin{proof}
+Use the property of Hilbert space, namely the orthogonalization based on the subspace. When use the monotonicity of $\lVert w\rVert$.
+\end{proof}
 \end{theorem}
 \item Note that $\psi$ is an intereseted embedding function to the higher dimensional space.
 \begin{proof} 
@@ -572,7 +575,24 @@ We then use the lemma by Higham which gives the crucial bound, $\lVert A_{11}^{-
 \item Due to maximization step, we generally get $O(rn^2)$ complexity.
 \item With additional assumption for positive semi definite matrix, we have $O(rn)$.
 \end{itemize}
+
 \section{Compressed Sensing}
+\begin{itemize}
+\item Motivation: Say $y=Ax$, an underdetermined problem. Our goal is to compressed into 
+$y$ and reconstruct $x$. Two main question arises:
+\begin{enumerate}
+\item What matrices A should we use?
+\item How can we reconstruct?
+\end{enumerate}
+\item The problem at hand is that we do not know the structure of $x$ at hand. For example we only know that it is sparse, but doesn't quite
+ know exactly the exact index.
+\item So to answer your question, one reason we might use 
+the Fourier transform in compressed sensing is to transform 
+the signal into a domain where its sparsity is more apparent, 
+making it easier to find a sparse representation of the signal.
+\end{itemize}
+
+\section{Compressed Sensing (2)}
 \begin{itemize}
 \item This method juxtaposes PCA method.
 \begin{definition}
@@ -633,6 +653,88 @@ These two concepts are related in the sense that they both exploit inherent stru
 in data (low-rank structure and sparsity, respectively) for efficient processing 
 or recovery.
 \item As another note, we can also exploit the rank of the data matrix.
+\end{itemize}
+
+\section{Compressed Sensing (3)}
+\begin{itemize}
+\item We need a number of points exponential in $d$ in the approximation scheme of Kernel.
+\item We are only solving for $[\alpha_{ij}]_{i,j}$, which are $m^2$ coefficients, maybe we may require less points in some situation.
+\item Let $A_{ij}=b_j(q^{(i)})$ and $y_i=f(q^{(i)})$, and we want to solve $y_i=A\alpha$.
+\item in general, $N,p$ have exponential scaling with respect to the dimension.
+\item The situation we're looking for is when $\alpha$ has "low complexity."
+\item Let $\alpha^*$ is s-sparse with $supp(\alpha^*)=S$. 
+To determine $\alpha^*\in\mathbb{R}^d$, we need for A to satisfy RNP (restricted null space property), that is, 
+\[
+null(A)\cap\{\Delta\in\mathbb{R}^p|\lVert\Delta_S\rVert_1\geq\lVert\Delta_{S^C}\rVert_1\}=\{0\}
+\]
+\begin{theorem}
+Let $\alpha^*$ be s-sparse and we have $A\alpha=y$.
+Solving 
+\begin{align*}
+\min \lVert \alpha\rVert_1 \text{ such that } A\alpha=y
+\end{align*} has a unique solution $\alpha$ iff $A$ satisfies RNP.
+\end{theorem}
+\begin{proof}
+For backward direction, it suffices to show that $\{\alpha|\lVert\alpha\rVert_1\leq \lVert\alpha^*\rVert_1, A\alpha=y\}
+=\{\alpha^*\}$. The idea is to set $\Delta=\tilde\alpha - \alpha^*$ and show that $\Delta=0$ using RNP.
+For forward direction, let $x\in null(A)$ and notice that $Ax_S=-Ax_{S^C}$, and so by uniqueness 
+$\lVert x_{S^C}\rVert_1>\lVert x_S\rVert_1$. It follows that $x=0$. This means that A satisfies RNP.
+\end{proof}
+\item In practice, people usually engineer such $A$ to find $\alpha$.
+\item Sufficient conditions for RNP
+\begin{enumerate}
+\item Pairwise incoherence of A
+\[
+\lVert A_S^T A_S-I\rVert_{\infty}< \frac 1{2s}, \forall\lvert S\rvert\leq s
+\]
+\begin{proof}
+Let $\alpha=\alpha_S+\alpha_{S^C}$ where $\alpha\in null(A)$. So $A(\alpha_S+\alpha_{S^C})=0$
+, that is, $A\alpha_S=-A\alpha_{S^C}$.
+By algebraic manipulation, we get
+\[
+\lVert \alpha_S\Vert_1\leq\dfrac{s\delta}{1-s\delta}\lVert\alpha_{S^C}\rVert_1
+\] Since $\delta < \frac 1{2s}$, we have $\lVert\alpha_S\rVert_1<\lVert\alpha_{S^C}\rVert_1$. 
+We showed that if $\alpha\in null(A)$, then $\lVert \alpha_S\rVert_1<\lVert\alpha_{S^C}\rVert_1$. So $A$ satisfies RNP.
+\end{proof}
+\begin{itemize}
+\item Asking for something more than $S$ might be too much, so we restrict it to $S$.
+\item This $A^T A$ situation in general comes up in regression 
+problem; in $A^T Ax=A^T y$ we want $A^T A$ to be close to identity in order to recover $x$.
+\item By JL lemma, we have $\lVert\dfrac{G^T G}{N}-I\rVert_{\infty}\leq\sqrt{\dfrac{\log p}N}=\epsilon$.
+\item This is because in JL lemma, we have $N-O(\dfrac{\log p}{\epsilon^2})$. This achieves $N\sim s^2$, but in general, we want $N\sim s$.
+\end{itemize}
+\item Restricted Isometry property: let $\delta_s=\max\limits_{\lvert S\rvert=s}\lVert 
+A^T_S A_S-I\rVert_2$. We require $\delta_{2S}< \frac 13$ to have a unique recovery.
+\begin{lemma}
+Let supp(u)=S, supp(v)=T and $supp(u)\cap supp(v)=\phi$. 
+Then we have $\lvert\langle Au, Av\rangle\rvert\leq\delta_{s+t}\lVert u\rVert_2\rVert 
+v\rVert_2$
+\end{lemma}
+\begin{proof} (lemma)
+Use the fact that $\lvert \langle A_S u_S, A_S 
+v_S\rangle\rvert=\lvert\langle(A_S^T A_S-I)u_S, v_S\rangle\leq 
+\lVert A_S^T A_S-I\rVert_2\lVert u_S\rVert_2\lVert v_S\rVert_2$.
+\end{proof}
+\begin{proof} (theorem)
+Let $\alpha$ satisfies $A\alpha=0$. We want to show $\lVert \alpha_S\rVert_1<\lVert 
+\alpha_{S^C}\rVert_1$, or equivalently, $\lVert \alpha_S\rVert_1<\frac 12\lVert 
+\alpha\rVert_1$. To this end, we may reorder $\alpha$ so that the first s entires are the biggest s elements, and the next s entires are the next
+ biggest s entries, and so on.
+The key step is as follows. First note that  
+\begin{align*}
+\lVert\alpha_{S_0}\rVert^2 &\leq \frac 1{1-\delta_{2S}}\lVert A\alpha_{S_0}\rVert^2
+\end{align*}
+We use the lemma to arrive $\leq\dfrac{\delta_{2s}}{1-\delta_{2s}}\lVert\alpha_{S_0}\rVert\sum\limits_{2k\geq 1}\lVert \alpha_{S_k}\rVert_2$.
+Further, the construction of $\alpha$ yields $\leq \dfrac{\delta_{2S}}{1-\delta_{2S}}\lVert\alpha_{S_0}\rVert_2\sum\limits_{k\geq 1}\dfrac{\lVert\alpha_{S_{k-1}}\rVert}{\sqrt{s}}$.
+\end{proof}
+\end{enumerate}
+\item The Iterative Hard Thresholding algorithm is given by the following steps:
+\begin{align}
+    a_{t+1} &= z_t - A^T(Az_t - y), \\
+    z_{t+1} &= P(a_{t+1}),
+\end{align}
+where $P(a_{t+1})=\min\limits_{z\text{ is s-sparse}}\lVert z-a_{t+1}\rVert$.
+\item This works when we know that the solution is s-sparse. Refer to \href{https://users.math.msu.edu/users/iwenmark/Teaching/MTH994/Holger_Simon_book.pdf}{here}, page 76.
 \end{itemize}
 \end{sloppypar}
 \end{document}
