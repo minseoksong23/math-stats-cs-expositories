@@ -1,0 +1,149 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{titlesec}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{fact}{Fact}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\centering\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+  \title{Analysis Foundation}
+\author{MinSeok Song}
+\date{}
+\pgfplotsset{compat=1.18}
+\begin{document}
+
+\maketitle
+\begin{sloppypar}
+\section*{Some transformation}
+\begin{enumerate}
+\item Fourier Series
+\begin{itemize}
+\item Some \href{https://www.eeweb.com/tools/trigonometry-laws-and-identities-sheet/}{trigonometry};
+ just remember that the cosine swaps the sign ($\cos(\alpha \pm\beta)=\cos(\alpha)\cos(\beta)\mp \sin(\alpha)\sin(\beta)$)
+\item Fourier coefficient is given by $\hat f(n)=\frac 1L\int^L_0 f(x)e^{-2\pi inx/L}dx$ for $n\in\mathbb{Z}$.
+\item The Fourier series is given by
+\begin{equation}
+\begin{aligned}
+f &\sim \sum_{n = -\infty}^{\infty} \hat{f}(n) e^{2\pi i n x / L} \\
+&= \hat{f}(0) + \sum_{n \geq 1} [\hat{f}(n) + \hat{f}(-n)]\cos (n\theta) + i[\hat{f}(n) - \hat{f}(-n)]\sin(n\theta).
+\end{aligned}
+\end{equation}
+\item As we see from the construction, it is only valid for a periodic function.
+\item $\hat f(0)$ is like the average value of the sound wave (like loudness of the chord), while cosine and sine
+ may represent the different components of the notes, like rhythmic or melodic aspect.
+\begin{enumerate}
+\item Multiplicative formula: $\int^T_0 f(x)g(x)dx=\frac 1T\sum\limits_{n\in\mathbb{Z}}\hat f(n)\hat g(n)$
+\item Convolution theorem: $\widehat{f * g}(n)=L\hat f(n)\hat g(n)$.
+\item Plancherel: $\frac 1L\int^L_0\lvert f(x)\rvert^2dx=\sum\limits_{n\in\mathbb{Z}}\lvert \hat f(n)\rvert^2$.
+\end{enumerate}
+\item We can now ask, 1) when does it converge? 2) in what sense? (mean square convergence, uniform convergence, etc) 3) is there any variation of foureir series that makes some convergence possible? (Abel, Cesaro)
+\item These are central theme in $\href{https://kryakin.site/am2/Stein-Shakarchi-1-Fourier_Analysis.pdf}{Stein-Shakarchi}$.
+\end{itemize}
+\item Fourier transform
+\begin{itemize}
+\item $\hat f(\xi)=\int^\infty_{-\infty}f(x)e^{-2\pi ix\xi}dx$
+\item Fourier inversion formula states that $f(x)=\int^\infty_{-\infty}\hat f(\xi)e^{2\pi ix\xi}d\xi$.
+\begin{example}
+Suppose $f$ is a continuous function supported on an interval [-M, M], whose Fourier transform $\hat f$ is of moderate decrease. Let $L/2>M$. Then we have 
+\[
+f(x)=\sum_n a_n(L)e^{2\pi inx/L}\text{, where } a_n(L)=\frac 1L\int^{L/2}_{-L/2}f(x)e^{-2\pi inx/L}dx
+\]
+and
+\[
+f(x)=\int^{\infty}_{-\infty}\hat f(\xi)e^{2\pi ix\xi}d\xi
+\]
+\end{example}
+\item Some fundamental results.
+\begin{enumerate}
+\item Poinsson summation formula: $\sum_{n\in\mathbb{Z}}f(n)=\sum_{n\in\mathbb{Z}}\hat f(n)$; in praticular, 
+\[
+\sum_{n\in\mathbb{Z}}f(n)=\sum_{n\in\mathbb{Z}}\hat f(n)
+\]
+\item Multiplicative formula: $\int^\infty_{-\infty}f(x)\hat g(x)=\int^\infty_{-\infty}\hat f(y)g(y)dy$.
+\item Convolution theorem: $\widehat{(f * g)}(\xi)=\hat f(\xi)\hat g(\xi)$.
+\item Plancherel: $\lVert \hat f\rVert=\lVert f\rVert$.
+\end{enumerate}
+\item Of course, these theorems do not hold in free; we need some regularity condition on $f$. In general, Schwartz class and moderately decreasing function 
+are discussed. Some generalization of $L^2$ is an optimal functional class but the discussion is a bit more involved (discussed for example in Evan's). 
+\end{itemize}
+\end{enumerate}
+
+\section*{Hyperbolic function}
+\begin{itemize}
+\item As in $\sin(x)=\dfrac{e^{ix}-e^{-ix}}{2i}$ and $\cos(x)=\dfrac{e^{ix}+e^{-ix}}2$, we simply
+ define $\sinh=\dfrac{e^{x}-e^{-x}}{2}$ and $\cos(x)=\dfrac{e^{x}+e^{-x}}2$.
+\item Similarly, we define $\tanh x = \dfrac{\sin h(x)}{\cosh (x)}=\dfrac{e^x-e^{-x}}{e^x+e^{-x}}$.
+\item tangent hyperbolic function is the most useful since it has a range between -1 and 1, 
+while having the desired nonlinearity. It also has a stronger gradient around 0.
+\end{itemize}
+
+\section*{Hilbert space}
+\begin{itemize}
+\item Riesz representation theorem states that every linear functional can be expressed as an inner product with respect to some element in $\mathcal{H}$.
+\subsection*{Orthogonality}
+\begin{fact}
+Orthogonal complement of a subset of $\mathcal{H}$ is a closed (linear) subset of $\mathcal{H}$.
+\end{fact}
+\begin{proof}
+It suffices to show that if $(y_n)$ is a convergent sequence in $A^\perp$, then the limit $y$ also belongs to $A^\perp$.
+ Let $x\in A$. By the continuity of inner product we have $\langle x,y\rangle=0$.
+\end{proof}
+
+\begin{theorem} (projection)
+Let $\mathcal{M}$ be a closed linear subpsace of a Hilbert space $\mathcal{H}$. Then
+\begin{enumerate}
+\item For each $x\in \mathcal{H}$, there is a unique closest point $y\in\mathcal{M}$ such that 
+\begin{equation}
+\lVert x-y\rVert = \min_{z\in\mathcal{M}}\lVert x-z\rVert
+\end{equation}
+\item The point $y\in\mathcal{M}$ closest to $x\in\mathcal{H}$ is the unique element of $\mathcal{M}$ with the
+ property that $(x-y)\perp\mathcal{M}$.
+\end{enumerate}
+\end{theorem}
+\end{itemize}
+\end{sloppypar}
+\end{document}
