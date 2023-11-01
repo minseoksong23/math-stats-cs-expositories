@@ -1,0 +1,121 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{titlesec}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{fact}{Fact}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{remark}[example]{Remark}
+
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\centering\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+  \title{Deep Learning}
+\author{MinSeok Song}
+\date{}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\begin{sloppypar}
+\section*{Fundamentals}
+\begin{itemize}
+\item More than one layer is called deep neural networks.
+
+\end{itemize}
+\section*{Activation Function}
+\begin{itemize}
+\item The author demonstrates how a neural network with weight 
+-2 and a bias of 3 can function as a simple NAND gate, which can then 
+be used to perform basic bit-wise arithmetic operations
+\item Instead of perceptron, which was presented as motivation, we can use activation function.
+\begin{enumerate}
+\item ReLU(rectified linear unit): solve vanishing gradient issue
+\item Sigmoid: smoothed out version of heaviside function
+\item Logitic: generalized version of sigmoid
+\item many variants exist - for example Gaussian function.
+\end{enumerate}
+\item In designing neural network, heuristics help a lot. For example 
+we can reasonably guess why we have ten outpus, instead of four (using binaries).
+\item Now we are going into the classification problem of MNIST data. For neural network in general, 
+the goal in the end is to minimize the loss function. 
+\item With caveat though - for example we may penalize overly complex model or there might be 
+inbalanced data problem.
+\item 
+\end{itemize}
+\section*{Vanishing gradient problem}
+\begin{itemize}
+\item Small gradient does not necessarily mean that we are close to ``local minima." This is more about computational infeasibility.
+\item For example, tanh activation function has gradients less than 1, so when we have many layers, by chain rule, we'll have exponentially decreasing gradients, 
+which makes our learning almost impossible.
+\end{itemize}
+\section*{Intuition of Deep Neural Network}
+\begin{itemize}
+\item As we build up layers, we ask questions that are more manageable.
+\item This is analogous to how programming language works.
+\section*{Backpropagation}
+\item One of the key efficiencies of \textbf{backpropagation} comes 
+from the fact that it reuses the computed gradients from later 
+layers in the network to calculate the gradients for earlier layers.
+\item Choices of activation function actually facilitates learning, so it's important to learn how it works.
+\item Four fundamental equations
+\begin{enumerate}
+\item $\delta^L=\nabla_a C\odot \sigma'(z^L)$: routine chain rule.
+\item $\delta^l=((w^{l+1})^T\delta^{l+1})\odot\sigma'(z^l)$: remember that $a$ forms $z$.
+\item $\dfrac{\partial C}{\partial b^l_j}=\delta^l_j$: remember that $b$ forms $z$.
+\item $\dfrac{\partial C}{\partial w^l_{jk}}=a_k^{l-1}\delta^l_j$: remember that $w$ forms $z$.
+\end{enumerate}
+\item A weight will learn slowly if either the input neuron is low-activation (4), or
+ if the output neuron has saturated (2) (in the case of sigmoid, we have flat surface near 0 and 1).
+\item The alternative method is finite difference method. But this would require us to 
+compute cost function many more times (we might need to compute for each weight)
+while backpropagation effectibely compute forward and backward one time each (and backward costs almost the same as forward).
+\end{itemize}
+\section*{Improving the Neural Network}
+\begin{itemize}
+\item Quadratic loss we have $\dfrac{\partial C}{\partial w}=(a-y)\sigma'(z)x$: note 
+that when $\sigma$ is sigmoid, we have a stall when $\sigma$ is close to 0 or 1.
+\item Benefits of cross entropy: we have $\dfrac{\partial C}{\partial w_j}=\dfrac 1n\sum_x x_j(\sigma(z)-y)$
+\item We do not have a slow-down of backpropagation, since essentially the $a(1-a)$ term is cancelled. 
+\item If output neuron is linear then quadratic cost is an appropriate one.
+\end{itemize}
+\end{sloppypar}
+\end{document}
