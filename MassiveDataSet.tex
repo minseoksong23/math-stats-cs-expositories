@@ -163,6 +163,7 @@ Let $X=X^*+\epsilon$. Then
 \item This theorem answers the question: if we slightly perturb our matrix, 
 how much does the "important" subspaces (as captured by the dominant singular vectors)
  change? This change is inversely proportional to the gap at $r$'th singular value.
+\item If we have a big gap, the subspace is so important that the small perturbation doesn't change much.
 \item In light of QR decomposition, we have $X^* = U^* z^*$ for some 
 $U^*$ with dimension $d\times r$ and $z^*$ with dimension $r\times N$. Let $X=X^*+\Delta$. By Wedin's inequality, we have
 \[
@@ -409,7 +410,7 @@ In fact, we can impose less regularity on Kernel, which motivates CUR. Notice al
 \section{Connection to CUR}
 \begin{itemize}
 \item Let's deviate a bit. In CUR decomposition, what happens if C and R are degenerate? The following existential theorem gives the answer for the worst case.
-\begin{theorem}[\href{ttps://www.sciencedirect.com/science/article/pii/S0024379596003011}{ref}]
+\begin{theorem}[\href{https://www.sciencedirect.com/science/article/pii/S0024379596003011}{ref}]
 Let $A=A_r+F$ where $rank(A_r)\leq r$ and
 $\lVert F\rVert_2\leq \epsilon=\sigma_{r+1}(A)$.
 Then there exists $r$ column rows index I, J, and coefficient matrix G with dimension $r\times r$ such that
@@ -735,6 +736,85 @@ Further, the construction of $\alpha$ yields $\leq \dfrac{\delta_{2S}}{1-\delta_
 \end{align}
 where $P(a_{t+1})=\min\limits_{z\text{ is s-sparse}}\lVert z-a_{t+1}\rVert$.
 \item This works when we know that the solution is s-sparse. Refer to \href{https://users.math.msu.edu/users/iwenmark/Teaching/MTH994/Holger_Simon_book.pdf}{here}, page 76.
+\item This is fast essentially because calculating $Az_t$ is fast.
+\item The optimization process usually is by balancing two objects illustrated as follows
+\[
+z_{t+1}=\arg\min_z\langle z-z_t,\nabla f(z-z_t)\rangle+\frac 1{2\tau}\lVert z-z_t\rVert^2
+\] 
+The philosophy here is similar.
+\item The convergence is shown to be linear:
+\begin{lemma}
+Under RIP assumption with $\delta_{3s}=\frac 18$, we have $\lVert z_s-z^*\rVert_2\leq 2^{-t}\lVert z^*\rVert_2$.
+\end{lemma}
+\end{itemize}
+
+\section*{Relation to JL lemma}
+\begin{itemize}
+\item In JL lemma, we have non-dependency on $d$ essentially 
+because we only needed to compute $N^2$ points...
+\item Now we're interested in $s-$sparse vectors $z$, instead of 
+all the $\binom{n}{2}$ paris, so we need some kind of notion of measure.
+\item We can indeed emulate the proof of JL lemma to get JL type of inequality.
+\item To this end, we start from
+\begin{fact}
+$P(\lVert Az\rVert^2_2-\lVert z\rVert^2>\epsilon\lVert z\rVert^2)\leq 2\exp(-N C_0(\epsilon))$
+where $A=\dfrac G{\sqrt{N}}$ and $G_{ij}\sim N(0,1)$
+\end{fact}
+that we proved before.
+\begin{lemma}
+For given support $S$, $\dfrac{\lVert Az\rVert^2}{\lVert z\rVert^2}=1\pm\delta$ for
+any supp(z)=S and $\lVert z\rVert_2=1$ with probability $1-2(\dfrac{12}\delta)^s\exp(-N C_0(\dfrac{\delta}2))$
+\end{lemma}
+\begin{theorem}
+For all $s$-sparse $z$ with $\lVert z\rVert=1$, we'll get a probability $1-2(\dfrac{cp}{s})^s(\dfrac{12}{\delta})^s\exp(-NC_0(\dfrac{\delta}2))$
+\end{theorem}
+\item The multiplicative term is called covering number. Logarithm of it gives us a dimensionality.
+\end{itemize}
+\section*{Matrix Completion}
+\begin{itemize}
+\item We approximate $K(x,y)\approx\sum_{i,j}\alpha_{ij}b_i(x)b_j(y)$. 
+How many points do we need to get, say $\epsilon$ error?
+\item This is like recovering $M\in\mathbb{R}^{n_1\times n_2}$ matrix from a submatrix drawn from $M$.
+\item We assume ``with replacement."
+\item We may assume that M satisfies the following.
+\begin{enumerate}
+\item $M$ is of rank $r$.
+\item $\mu(U)=\dfrac{n_1}r\max\limits_{1\leq i\leq n_1}\lVert U^T e_i\rVert^2_2\leq \mu_0$ (this measure how spread 
+the entries of singular vectors are, and is called "incoherence condition" since it
+essentially measure how incoherent it is to the canonical vector)
+\item $\mu(V)\leq \mu_0$
+\item Each entry of $UV^T$ satisfies
+\[
+\lVert UV^T\rVert_{max}\leq\mu_1\sqrt{\dfrac{r}{n_1n_2}}
+\] (this says that moreover, $UV^T$ should also have spreadout entries, this is a bit stronger than the previous condition)
+\end{enumerate}
+\item These conditions basically rule out interpolating with non-smooth highly concentrated basis.
+\item Heuristically the second condition signifies the spreadout of the columns and the last condition talks about the spreadout
+across the rows as well.
+\begin{theorem}
+Under these assumptions, if $m=\lvert\Omega\rvert\geq\max\{\mu_1^2, \mu_0\}\cdot r(n_1+n_2)\beta\log^2(2n_2)$ for 
+some $\beta>1$ then the solution for $\min_X\lVert X\rVert_*\quad\text{s.t. }X_{ij}=M_{ij}, \forall (i,j)\in\Omega$ is $M$ with 
+high probability.
+\end{theorem}
+\begin{proof}
+Revisit RNP: we wanted to show that if $A\Delta=0$ and $\Delta\neq 0$, then we necessarily have $\lVert \Delta_{S^C}\rVert>\lVert \Delta_S\rVert$.
+We then have $\lVert x^*+\Delta\rVert_1>\lVert x^*\rVert_1$.
+
+A little deviation: we call $v$ is subgradient if
+\[
+\forall u\in S, f(u)\geq f(w)+\langle u-w, v\rangle
+\]
+Existence of subgradient is simply the reformulation of convex function.
+
+\end{proof}
+\end{itemize}
+\section*{Random Sampling in Bounded Orthonormal Systems}
+\begin{itemize}
+\item Bounded orthonormal system is an orthonormal system with
+\[
+\lVert \phi_j\rVert_\infty:=\sup_{t\in\mathcal{D}}\lvert \phi_j(t)\rvert\leq K, \forall j\in [N]
+\]
+\item Smallest such K is 1.
 \end{itemize}
 \end{sloppypar}
-\end{document}
+\end{document} 
