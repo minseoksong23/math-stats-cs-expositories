@@ -52,6 +52,7 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
 
 \section{Determinant}
 Begin by visualizing an $n\times n$ matrix as a linear transformation. In mathematics, it's often enlightening to 
@@ -92,6 +93,14 @@ $$Af=\sum_{\sigma\in S_k}(\text{sgn } \sigma)\sigma f$$ and $$f\otimes g(v_1,\do
  \item The logarithm function translates multiplication into addition and possesses inherent concavity. As a result, for a positive definite matrix \( A \), \( \log \text{det}(A) \) is concave. A more rigorous justification can be derived by verifying \( g''(t) \leq 0 \) for 
  the function \( g(t) = f(Z + tV) \) where \( Z, V \in S^n \).
 \end{itemize}
+\begin{fact}
+$A^{-1}=\frac{1}{det(A)}adj(A)$, with $adj(A)_{ij}=(-1)^{j+i}det(A_{-j,-i})$
+\end{fact}
+\begin{proof}
+We can simply check that the above three properties hold. The multiplication involves
+pairing the rows of $A$ with the columns of $adj(A)$. This is precisely why the adjugate is
+formed with transposed cofactors. Further, excluding $(i,j)$ index in the definition enables linearity.
+\end{proof}
 \end{remark}
 
 \section{Pseudo Inverse, rank}
@@ -113,7 +122,7 @@ Let $A=\sum\limits^{rank(A)}_{i=1}\sigma_iu_iv_i^*, \sigma_1\geq\dots\geq\sigma_
  Then $\arg\limits_X\min\limits_{rank(X)\leq r}\lVert A-X\rVert_2
  =\sum\limits^r_{i=1}\sigma_iu_iv_i^*$. Furthermore, we have 
 \[
-\min\limits_{rank(X)\leq}\lVert A-X\rVert_2=\sigma_{r+1}
+\min\limits_{rank(X)\leq r}\lVert A-X\rVert_2=\sigma_{r+1}
 \]
 \end{theorem}
 \begin{proof}
@@ -134,11 +143,16 @@ vectors and $C$ (k by n) consists of coefficient for each column vector of $A$.
  On the other hand, we can view each row of $A$ as linear 
  combination of row of $C$ with $B$ giving the coefficients. 
  This implies that $dim(rowsp(A))\leq dim(colsp(A))$. Apply the same
-  principle fo $A^T$ and we get the desired equality.
+  principle to $A^T$ and we get the desired equality.
 \end{proof}
 \begin{fact}
 $dim(AB)\leq \min (dim(A), dim(B))$
 \end{fact}
+\begin{fact}
+For Hermitian $A$, we have $\max\lVert\langle Ax,x\rangle\rVert=\lVert A\rVert_2$.
+\end{fact}
+\item This comes from the fact that for Hermitian matrix, eigenvalue and singular value coincide, so when 
+the maximum is achieved, $x$ and $Ax$ will have the same direction.
 \end{itemize}
 
 \section{Condition number}
@@ -219,7 +233,7 @@ We can interpret \( x \) based on its bit patterns:
 \begin{enumerate}
 \item The usage of subnormal is to prevent underflow.
 \item This is an excellent example of engineering design to represent real numbers given a fixed number of bits.
-\item The subnormal value is always less than or equalt o $2^{-1022}$, and the normalized value if greater than or equal to that, justifying such a choice.
+\item The subnormal value is always less than or equalt to $2^{-1022}$, and the normalized value if greater than or equal to that, justifying such a choice.
 \end{enumerate}
 \begin{definition}
 The machine epsilon is the gap between 1 and the next largest floating point number. It is $2^{-52}\approx 10^{-16}$ for the double format.
@@ -232,7 +246,7 @@ Largely, we may use two kinds of error; absolute error, $\epsilon_{abs}=\lVert x
 \begin{itemize}
 \item One might ask, why would we use $x$ instead of $\hat x$ in the denominator. This is purely due to interpretability (just more natural).
 \end{itemize}
-\subsection*{On fl notation}
+\subsection{On fl notation}
 How do we round? Well, we do
 \[
 \text{round}(x)=
@@ -265,10 +279,45 @@ a normalizing factor.
 \item Time complexity is $O(mn^2)$ where $n<m$. Truncated SVD where 
 for getting the first k singular values takes $O(mnk)$.
 \item In practice, we would prefer randomized SVD.
+\item Without any duplication of singular value, the corresponding eigenvector is unique upto complex number multiplication... now if
+we have any duplicates, it's unique upto rotation. The following illustrates this point.
+$$
+u_1 \sigma_1 v_1^T+ u_2\sigma_1 v_2^T=
+\begin{pmatrix}
+u_1 & u_2
+\end{pmatrix}
+\begin{pmatrix}
+\sigma &  \\
+ & \sigma
+\end{pmatrix}
+\begin{pmatrix}
+v_1^T \\
+v_2^T
+\end{pmatrix}
+=\sigma 
+\begin{pmatrix}
+u_1 & u_2
+\end{pmatrix}
+\begin{pmatrix}
+v_1^T \\
+v_2^T
+\end{pmatrix}
+=\sigma 
+\begin{pmatrix}
+u_1 & u_2
+\end{pmatrix}
+QQ^T
+\begin{pmatrix}
+v_1^T \\
+v_2^T
+\end{pmatrix}
+$$
 \end{itemize}
 \subsection{LU decomposition}
 \begin{itemize}
 \item We decompose by doing Gaussian elimination, resulting in $A=\Pi LU$.
+\item The $\Pi$ factor is due to row swapping. We could also do $\Pi AQ=LU$ where $Q$ corresponds to column swapping.
+\item Indeed these swappings are purely due to numerical consideration (roundoff error). In general we do not want pivoting element to be small.
 \item When $\Pi$ is an identity matrix, we get $A=LU$.
 \end{itemize}
 \subsection{LDU decomposition}
@@ -276,13 +325,31 @@ for getting the first k singular values takes $O(mnk)$.
 \item From $LU$, we make the diagonal elements of L and U all 1's. 
 \item This makes it easier for us to take inverse of $LU$. 
 \end{itemize}
+
+\subsection{Schur decomposition}
+\begin{itemize}
+\item Refer to \href{https://en.wikipedia.org/wiki/Schur_complement}{here}.
+\item The idea is that we can use "block" LDU decomposition.
+\end{itemize}
+
 \subsection{Cholesky factorization}
 \begin{itemize}
 \item Cholesky factorization gives $A=LL^T$ for Hermitian, positive-definite matrix.
 \item This is somewhat analogous to $x=(\sqrt x)^2$.
+\item Uniqueness is guaranteed for positive definite matrix. However, there is no uniqueness for positive semidefinite.
+\item For example, for $
+\begin{pmatrix}
+0 & 0 \\ 0 & 1
+\end{pmatrix}$, we could have set $L=\begin{pmatrix}
+  0 & 0 \\ \cos\theta & \sin\theta
+\end{pmatrix}
+  $ or $L=\begin{pmatrix}
+    0 & 0 \\ \sin\theta & \cos\theta
+  \end{pmatrix}$
 \end{itemize}
 \subsection{QR decomposition}
 \begin{itemize}
+\item Poor man's SVD
 \item In the $A=QR$ decomposition, the matrix Q is an orthogonal matrix, 
 and the spanning set of the first k leading columns of K is same as
  the space spanning by columns of $A$.
@@ -290,9 +357,21 @@ and the spanning set of the first k leading columns of K is same as
  can decompose
 \begin{enumerate}
 \item $m\times r$, $r\times n$ (this is a reduced form capturing the essence of $A$ in terms of its rank).
-\item $m\times n$, $n\times n$ (this is referred to as thin or reduced QR decomposition).
+\item $m\times n$, $n\times n$ (this is referred to as thin or reduced QR decomposition, derived from the next kind).
 \item $m\times m$, $m\times n$ (this is the full QR decomposition).
 \end{enumerate}
+\item We also have $A\Pi=Q
+\begin{pmatrix}
+  R_1 & S \\
+  0 & 0
+\end{pmatrix}
+  $ and in addition $A=Q\begin{pmatrix}
+    L & 0 \\ 0 & 0
+  \end{pmatrix} U^*$ where $U$ and $Q$ are orthogonal, by taking $\begin{pmatrix}
+  R_1^* \\ S^*
+  \end{pmatrix}=Z\begin{pmatrix}
+  R_2 \\ 0
+  \end{pmatrix}$
 \item The detail is canonical.
 \item There are several ways to compute: Gram-Schmidt process, Householder transformations,
  and Givens rotations.
@@ -324,7 +403,16 @@ J_i =
  called Jordan block.
 \item Jordan form is unique upto permutations of the blocks.
 \end{itemize}
-\subsection{Schur decomposition}
+\subsection{CUR decomposition}
+\begin{itemize}
+\item Also called interpolative decomposition.
+\item The main advantage of this decomposition is interpretability, since it uses the column
+ from actual data matrix.
+\item First choose k columns and rows, denoted by C and R. Calculate $U=\tilde U^+$, and we can approximate as $A=CUR$.
+\item However, this is not suited for sparse matrix.
+
+\end{itemize}
+
 \section{Tensor decomposition}
 \section{Error analysis, stability}
 \begin{definition}
@@ -355,5 +443,22 @@ for any $x\in X$, the computed $\hat y$ satisfies
 \]
 for small $\delta, \epsilon>0$.
 \item This says that our computed value is almost the right answer for almost the right data.
+\item In machine learning framework, we often speak of approximation, integration, and optimization error. 
+Approximation error is a distance between true value and an output of hypothesis class.
+ Integration error is a distance between the output of hypothesis class and the output of ERM.
+  Optimization error is a distance between the output of ERM and the hypothesis from of our choice of algorithm.
 \end{itemize}
+\section{Norms}
+\subsection{Nuclear norm}
+\begin{itemize}
+\item $\lVert A\rVert_*=\sup_{\sigma_1(Q)\leq 1}\langle Q,A\rangle$: this is like saying that the dual norm of spectral norm is nuclear norm.
+\item Using this, we can prove that the nuclear norm is actually a norm.
+\end{itemize}
+\section{miscellaneous facts}
+\begin{fact}
+determinant of $A$ is equal to the product of eigenvalues.
+\end{fact}
+\begin{proof}
+Note that $det(A-\lambda I) = \Pi_i (\lambda_i -\lambda)$ and plug in $\lambda = 0$.
+\end{proof}
 \end{document}

@@ -6,7 +6,8 @@
 \usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
-\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{enumerate}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -14,9 +15,9 @@
 \usepackage{mathabx}
 \usepackage{amsfonts}
 \usepackage{enumitem}
-\usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{hyperref}
+
+
 \graphicspath{ {./images/} }
 \usetikzlibrary{shapes}
 \usepgfplotslibrary{polar}
@@ -32,7 +33,6 @@
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
 
-\newtheorem{fact}{Fact}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -42,23 +42,18 @@
 \theoremstyle{remark}
 \newtheorem{example}{Example}
 \newtheorem{remark}[example]{Remark}
+\newtheorem{fact}{Fact}
 
-\newcommand{\bigsection}[1]{
-  \titleformat*{\section}{\centering\LARGE\bfseries}
-  \section*{#1}
-  \titleformat*{\section}{\large\bfseries} % Reset to the original format
-}
-\titleformat{\section}
-  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
-  \title{Analysis Foundation}
+\title{Analysis Foundation}
 \author{MinSeok Song}
 \date{}
+\usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \begin{document}
 
 \maketitle
-\begin{sloppypar}
-\section*{Some transformation}
+\tableofcontents
+\section{Some transformation}
 \begin{enumerate}
 \item Fourier Series
 \begin{itemize}
@@ -112,7 +107,7 @@ are discussed. Some generalization of $L^2$ is an optimal functional class but t
 \end{itemize}
 \end{enumerate}
 
-\section*{Hyperbolic function}
+\section{Hyperbolic function}
 \begin{itemize}
 \item As in $\sin(x)=\dfrac{e^{ix}-e^{-ix}}{2i}$ and $\cos(x)=\dfrac{e^{ix}+e^{-ix}}2$, we simply
  define $\sinh=\dfrac{e^{x}-e^{-x}}{2}$ and $\cos(x)=\dfrac{e^{x}+e^{-x}}2$.
@@ -121,10 +116,10 @@ are discussed. Some generalization of $L^2$ is an optimal functional class but t
 while having the desired nonlinearity. It also has a stronger gradient around 0.
 \end{itemize}
 
-\section*{Hilbert space}
+\section{Hilbert space}
+\subsection{Orthogonality}
 \begin{itemize}
 \item Riesz representation theorem states that every linear functional can be expressed as an inner product with respect to some element in $\mathcal{H}$.
-\subsection*{Orthogonality}
 \begin{fact}
 Orthogonal complement of a subset of $\mathcal{H}$ is a closed (linear) subset of $\mathcal{H}$.
 \end{fact}
@@ -145,5 +140,33 @@ Let $\mathcal{M}$ be a closed linear subpsace of a Hilbert space $\mathcal{H}$. 
 \end{enumerate}
 \end{theorem}
 \end{itemize}
-\end{sloppypar}
+
+\section{Functional analysis}
+\subsection{Duality}
+\begin{itemize}
+\item $\lVert g\rVert_{L^q}=\sup_{\lVert f\rVert_p\leq 1}\lvert\Phi_g(f)\rvert$ where $\Phi_g(f)=\int f(x)g(x)dx$
+\subsection{Some important facts}
+\begin{theorem}[Uniform boundedness principle]
+  Let $X$ be Banach space, and let $Y$ be a normed vector space. Suppose 
+  $\mathcal{F}$ is a family of continuous linear operators from $X$ to $Y$ such 
+  that for every $x$ in $X$, the set $\{T(x):T\in \mathcal{F}\}$ is bounded in $Y$.
+   Then the family $\mathcal{F}$ is uniformly bounded, meaning there exists a constant $M$ such that
+    for every $T$ in $\mathcal{F}$ and every $x$ in $X$, we have $\lVert T(x)\rVert_Y\leq M\lVert x\rVert_X$.
+  \end{theorem}
+\item What really underlies this theorem is Baire Category theorem (completeness).
+\end{itemize}
+
+\section{Measure theory}
+\begin{theorem} (Lebesgue's decomposition theorem)
+Let $\mu$ and $\nu$ be two $\sigma$-finite signed measures on a measurable space $(\Omega,\Sigma)$. There exists 
+two $\sigma$-finite signed measures $\nu_0$ and $\nu_1$ such that
+\begin{enumerate}
+\item $\nu = \nu_0 + \nu_1$.
+\item $\nu_0 \ll \mu$ ($\nu_0$ is absolutely continuous with repsect to $\mu$).
+\item $\nu_1 \perp \mu$. (intuition: mutual exclusivity in their ``occupation" of a space)
+\end{enumerate}
+\begin{itemize}
+\item The theorem involves concrete construction using Radon-Nikodin.
+\end{itemize}
+\end{theorem}
 \end{document}

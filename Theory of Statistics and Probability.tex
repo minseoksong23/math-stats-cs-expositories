@@ -1,8 +1,14 @@
-\documentclass{article}
-\usepackage[hyphens,spaces,obeyspaces]{url}
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{titlesec}
 \graphicspath{ {./images/} }
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -26,7 +32,6 @@
             }}
 \newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
 \usepackage[utf8]{inputenc}
-\usepackage{titlesec}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -39,10 +44,13 @@
 \newtheorem{remark}[example]{Remark}
 
 \newcommand{\bigsection}[1]{
-  \titleformat*{\section}{\LARGE\bfseries}
+  \titleformat*{\section}{\centering\LARGE\bfseries}
   \section*{#1}
   \titleformat*{\section}{\large\bfseries} % Reset to the original format
 }
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+
 
 \title{Theory of statistics and probability}
 \author{MinSeok Song}
@@ -54,21 +62,21 @@
 \bigsection{Statistics}
 The dichotomy of Bayesian and Frequentist approach is mostly a matter of division based on foundational philosophical differences, and in some situation is not necessarily natural; each instance can be formally simply seen as a choice of analysis. The dichotomy has mainly developed based on two philosophical school of thoughts:
  subjective belief (via prior distribution) vs. long-run frequency (via sampling distribution).
-Frequentist
+\begin{enumerate}
+\item Frequentist
 \begin{itemize}
 \item They avoid making probabilistic claims about model parameters and hypothesss. Instead, they describe the behavior of statistics and procedures over many hypothetical repeated samples.
 \item They use Statistics derived from data, and use deterministic approach for inference, with methods like hypothesis testing and confidence intervals to draw conclusions about population parameters based on sample data.
 \item examples: T-test, linear regression, etc
 \end{itemize}
-
-Bayesian
+\item Bayesian
 \begin{itemize}
 \item They assign prior beliefs (distribution function) on parameters of model.
 \item They use probabilistic argument on specific hypothesis or parameter values.
 \item examples: MCMC, Bayesian hierarchical modeling, etc
 \end{itemize}
-
-\subsection*{data science}[list of topics that will be discussed]
+\end{enumerate}
+\section*{Data Science Procedure}[list of topics that will be discussed]
 \begin{enumerate}
 \item Preparation of data
 \begin{itemize}
@@ -116,20 +124,17 @@ Bayesian
 \item Communication of models
 \end{enumerate}
 
-\section{Preparation of Data}
-\subsection{Handling Missing Data}
-\subsubsection{Types of Missing Data}
-\begin{itemize}
+\subsection*{Types of Missing Data}
+\begin{enumerate}
 \item MCAR
 \item MAR
 \item MNAR
+\end{enumerate}
 
-\end{itemize}
 
-\subsection{Outliers}
-
-\section{Inference on statistics}
-\subsection{p-value}
+\section*{Outliers}
+\section*{Inference on statistics}
+\section*{p-value}
 \begin{definition}
 Given some hypothesis, the p-value is the probability of obtaining test results at least as extreme as 
 the result actually observed, under the assumption that the null hypothesis is correct.
@@ -140,7 +145,7 @@ level is a threshold we set to decide when we have enough evidence to reject the
 \item In statistics, we do not quite "prove" that the hypothesis is true. We can only reject the false statements or assertions (the theory of falsification, proposed by Karl Popper). 
 \end{itemize}
 
-\subsection{t-distribution}
+\section*{t-distribution}
 \begin{definition}
 t-distribution is defined as $\frac Z{\sqrt{\frac Vk}}$ where $Z \perp V$, $Z\sim N(0,1)$, and $V\sim \chi_k^2$.
 \end{definition}
@@ -148,17 +153,20 @@ t-distribution is defined as $\frac Z{\sqrt{\frac Vk}}$ where $Z \perp V$, $Z\si
 \item The t-distribution has the thicker tails than the normal distribution.
 \item Note that the $\chi_k^2$ distribution has mean $k$ and variance $2k$. Hence as $k$ gets larger the t-distribution 
 looks like standard normal distribution due to CLT. 
-\item In multiple regression setting, $\frac{\frac{\hat\beta_1-\beta_1}{\frac \sigma{\sqrt{\sum_i(X_i-\bar X)^2}}}}{\sqrt{(n-2)\cdot\frac{\hat \sigma^2}{\sigma^2}/(n-2)}}\sim t_{n-2}$ under normal assumption of residual.
-\subsubsection{Chi-squared distribution}
+\item In multiple regression setting, $\frac{\frac{\hat\beta_1-\beta_1}{\frac \sigma{\sqrt{\sum_i(X_i-\bar X)^2}}}}
+{\sqrt{(n-2)\cdot\frac{\hat \sigma^2}{\sigma^2}/(n-2)}}\sim t_{n-2}$ under normal assumption of residual.
+\end{itemize}
+\section*{Chi-squared distribution}
 \begin{itemize}
 \item It is possible to have $f(X)$ and $g(X)$ be independent. The key example concerns chi-distribution: Say $\theta$ is uniformly distributed in $[0,2\pi]$. 
 Let us say $R^2$ follows $chi$-squared distribution with degree 2: this acts like a distance square in the 2d space. Then $X= r\cos(\theta)$ and $Y=r\sin(\theta)$ are independent.
 \item The definition of chi-square looks contrived, in particular compared to normal distribution, but we use it a lot in the context of sum of squares.
-\end{itemize}
+\item Under moment assumption, it's approximately true for large $n$ via CLT.
 \item Under moment assumption, it's approximately true for large $n$ via CLT.
 \end{itemize}
 
-\subsection{Prediction interval, Confidence interval}
+
+\section*{Prediction interval, Confidence interval}
 \begin{itemize}
 \item In the context of linear regression, a \textbf{confidence interval} provides a range of values within which we expect the true regression coefficient (e.g., $ \beta_0 $ or $ \beta_1 $) to lie with a certain level of confidence. This reflects our uncertainty about the 
 value of the coefficient based on the data we have observed.
@@ -166,7 +174,7 @@ value of the coefficient based on the data we have observed.
  We have $y=\beta_0+\beta_1 x+\epsilon$. Note the additional uncertainty introduced by the random error $\epsilon$.
 \end{itemize}
 
-\subsection{Fisher information}
+\subsection*{Fisher information}
 \begin{definition}
 Fisher information is defined by $\mathcal{I}(\theta)=E[(\frac \partial{\partial\theta}\log f(X;\theta))^2|\theta]$ for appropriately regular $f$.
 \end{definition}
@@ -230,7 +238,7 @@ Throughout the theory of probability, we usually assume that the probability mea
     measurable set $P$ whose measure is 1.
 \end{proposition}
 
-\subsection*{Covariance, Independence}
+\section*{Covariance, Independence}
 \begin{itemize}
 \item Covariance only gives the information about linear relationship between two random variables. It has a limit of capturing non-linear relationship.
 \item Non-linear activation function in deep neural network is an example of such an attempt to leverage non-linearities.
@@ -240,7 +248,7 @@ Throughout the theory of probability, we usually assume that the probability mea
 \item Also note that two random variables may have different mappings while having the same distribution: standard example is $1-X$ and $X\in [0,1]$.
 \end{itemize}
 
-\subsection*{Distribution function}
+\section*{Distribution function}
 \begin{itemize}
 \item If we were to calculate the density function of $X+Y$, we may use convolution.
 \item If we were interested in $\frac XY$, we may use transformation and integrate out. 
@@ -249,15 +257,16 @@ Throughout the theory of probability, we usually assume that the probability mea
 
 \end{itemize}
 
-\subsection*{Convergence}
+\section*{Convergence}
 
-\subsection*{Markov Chain}
+\section*{Markov Chain}
 
-\subsection*{Martingale}
+\section*{Martingale}
 
-\subsection*{Brownian Motion}
+\section*{Brownian Motion}
 
-\subsection*{Relationship with PDE}
+\section*{Relationship with PDE}
 
-\subsection*{Relationship with Complex Analysis}
+\section*{Relationship with Complex Analysis}
+
 \end{document}
