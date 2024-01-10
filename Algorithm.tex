@@ -149,13 +149,50 @@ It takes $\Theta(n^{1.25})$ in average.
 \end{example}
 
 \section{Dynamic Programming}
-
+\begin{itemize}
+\item This reduces the problem to smaller problems like D \& C
+but possibly overlapping subproblems. For that reason, we need to memoize.
+\end{itemize}
 \section{Greedy Algorithm}
 
-\section{BFS/DFS}
+\section{Graph, BFS/DFS, Minimum spanning(Prim's, Kruskal's)}
+\begin{itemize}
+\item Three data structures to represent graph: list of edges, 
+adjacency matrix, adjacency lists(could use doubly linkedlist, dictionary, etc). 
+\item We could compare and see the tradeoff between 
+space complexity, finding specific edge, and list 
+of edges of particular node.
+\item We can devise simple seach algorithms using simple set theory...
+\item Some more sophisticated search strategies include BFS, DFS, MST, etc.
+\begin{algorithm}[H]
+\caption{BFS}
+\begin{align*}
+&\text{1. initialize all nodes and put }d[v]=\infty \\
+&\text{2. while }Q\neq \emptyset \\
+& \quad \text{v = }Dequeue(Q) \\
+& \quad\text{ for each adjacent node of }v\in V, \\
+& d[v]=d[u]+1, p[v] = u\text{, and }Enqueue(Q,v)
+\end{align*}
+\end{algorithm}
+\begin{theorem}
+$\forall v, d[v]=$length of shortest path from $s$ to $v$
+\end{theorem}
+\begin{proof}
+Note that $d[u]=k$ or $k+1$ if $u\in Q$. Further, $d[u]\leq k$ if $u\in Done$ for some $k$.
+We prove the $\leq$ direction since $\geq$ is clear. Induct on the length of
+shortest path from s to v. Let's say this path goes through u. So we have $s-u-v$. By induction
+hypothesis, we have $d[u]\leq \text{ length of shortest path from s to u}$.
 
+Note now that $d[v] \leq d[u]+1$ after u is processed. Further, we have
+$d[u]+1\leq\text{ shortest length from s to v}$ by our construction.
+\end{proof}
+\item The key of this proof is to identify the point where $u$ is just processed. This makes the proof
+rather precise.
+\item Partition into layers... in this case there will be no ``jump'' to the figure.
 
+\end{itemize}
 
+\bigsection{Miscelleneous}
 \section*{Spectral clustering}
 \begin{definition}
 $Ncut(A,B)$ is defined as $$Ncut(A,B) = cut(A,B)(\frac 1{d(A)}+\frac 1{d(B)})$$ where $d(A)=\sum_{i\in A}d_i$.
@@ -165,7 +202,10 @@ $Ncut(A,B)$ is defined as $$Ncut(A,B) = cut(A,B)(\frac 1{d(A)}+\frac 1{d(B)})$$ 
 \item The intuition is that when $A$ is relatively small, the $\frac 1{d(A)}$ will be large, hence discouraging the isolating small groups.
 \item Finding minimum Ncut is equivalent to finding vector $v$ that minimizes $$\frac{v^T Lv}{v^tDv}\text{such that }v^tD1=0,v_i\in\{a,b\}$$ where 
 $L=D-W$.
-
+\item The thinking goes like this... $M(b,i)=\max\{M(b-w_i,i-1)+v_i, M(b,i-1)\}\text{ if }b\geq w_i
+\text{ else }M(b,i)=M(b,i-1)$ where $M(b,i)$ is a maximum value
+we can get with knapsack of capacity $b$, uwing a subset of the first
+$i$ items only.
 \end{itemize}
 \end{remark}
 
@@ -385,4 +425,13 @@ Series (for a regular periodic function) and Fourier transform
 (for a regular non-periodic function).
 \item The essence of the theorem is the interchange between multiplication and convolution.
 \end{itemize}
+
+\section*{Hashing}
+\begin{itemize}
+\item One example would be to add up all ASCII number,
+ divide by the size of the list, and do the modulo (this whole process is a ``hash function") by the
+  size of an array (usually a prime number).
+\item Now, if we end up getting the same number, we can further use linkedlist to store different nodes.
+\end{itemize}
+
 \end{document}
