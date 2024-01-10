@@ -41,6 +41,7 @@
 \newtheorem{definition}{Definition}
 \theoremstyle{remark}
 \newtheorem{example}{Example}
+\newtheorem{fact}{Fact}
 \newtheorem{remark}[example]{Remark}
 
 \newcommand{\bigsection}[1]{
@@ -50,7 +51,8 @@
 }
 \titleformat{\section}
   {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
-
+\titleformat{\subsection}
+{\normalfont\large\bfseries}{\thesubsection}{1em}{}
 
 \title{Theory of statistics and probability}
 \author{MinSeok Song}
@@ -76,7 +78,7 @@ The dichotomy of Bayesian and Frequentist approach is mostly a matter of divisio
 \item examples: MCMC, Bayesian hierarchical modeling, etc
 \end{itemize}
 \end{enumerate}
-\section*{Data Science Procedure}[list of topics that will be discussed]
+\section{Data Science Procedure}[list of topics that will be discussed]
 \begin{enumerate}
 \item Preparation of data
 \begin{itemize}
@@ -124,7 +126,7 @@ The dichotomy of Bayesian and Frequentist approach is mostly a matter of divisio
 \item Communication of models
 \end{enumerate}
 
-\subsection*{Types of Missing Data}
+\subsection{Types of Missing Data}
 \begin{enumerate}
 \item MCAR
 \item MAR
@@ -132,9 +134,9 @@ The dichotomy of Bayesian and Frequentist approach is mostly a matter of divisio
 \end{enumerate}
 
 
-\section*{Outliers}
-\section*{Inference on statistics}
-\section*{p-value}
+\section{Outliers}
+\section{Inference on statistics}
+\section{p-value}
 \begin{definition}
 Given some hypothesis, the p-value is the probability of obtaining test results at least as extreme as 
 the result actually observed, under the assumption that the null hypothesis is correct.
@@ -145,7 +147,7 @@ level is a threshold we set to decide when we have enough evidence to reject the
 \item In statistics, we do not quite "prove" that the hypothesis is true. We can only reject the false statements or assertions (the theory of falsification, proposed by Karl Popper). 
 \end{itemize}
 
-\section*{t-distribution}
+\section{t-distribution}
 \begin{definition}
 t-distribution is defined as $\frac Z{\sqrt{\frac Vk}}$ where $Z \perp V$, $Z\sim N(0,1)$, and $V\sim \chi_k^2$.
 \end{definition}
@@ -156,7 +158,8 @@ looks like standard normal distribution due to CLT.
 \item In multiple regression setting, $\frac{\frac{\hat\beta_1-\beta_1}{\frac \sigma{\sqrt{\sum_i(X_i-\bar X)^2}}}}
 {\sqrt{(n-2)\cdot\frac{\hat \sigma^2}{\sigma^2}/(n-2)}}\sim t_{n-2}$ under normal assumption of residual.
 \end{itemize}
-\section*{Chi-squared distribution}
+
+\section{Chi-squared distribution}
 \begin{itemize}
 \item It is possible to have $f(X)$ and $g(X)$ be independent. The key example concerns chi-distribution: Say $\theta$ is uniformly distributed in $[0,2\pi]$. 
 Let us say $R^2$ follows $chi$-squared distribution with degree 2: this acts like a distance square in the 2d space. Then $X= r\cos(\theta)$ and $Y=r\sin(\theta)$ are independent.
@@ -166,15 +169,15 @@ Let us say $R^2$ follows $chi$-squared distribution with degree 2: this acts lik
 \end{itemize}
 
 
-\section*{Prediction interval, Confidence interval}
+\section{Prediction interval, Confidence interval}
 \begin{itemize}
 \item In the context of linear regression, a \textbf{confidence interval} provides a range of values within which we expect the true regression coefficient (e.g., $ \beta_0 $ or $ \beta_1 $) to lie with a certain level of confidence. This reflects our uncertainty about the 
 value of the coefficient based on the data we have observed.
 \item On the other hand, a \textbf{prediction interval} provides a range of values within which a new observation $ y $ (given a particular $ x $) is expected to fall with a certain level of confidence.
- We have $y=\beta_0+\beta_1 x+\epsilon$. Note the additional uncertainty introduced by the random error $\epsilon$.
+We have $y=\beta_0+\beta_1 x+\epsilon$. Note the additional uncertainty introduced by the random error $\epsilon$.
 \end{itemize}
 
-\subsection*{Fisher information}
+\subsection{Fisher information}
 \begin{definition}
 Fisher information is defined by $\mathcal{I}(\theta)=E[(\frac \partial{\partial\theta}\log f(X;\theta))^2|\theta]$ for appropriately regular $f$.
 \end{definition}
@@ -194,61 +197,69 @@ Say $\hat\theta(X)$ is an unbiased estimator. We have $Var(\hat\theta)\geq \frac
 \item This says that as the fisher information gets larger, we have better precision.
 \item There is a similar result for biased estimator.
 \end{itemize}
-
+\bigsection{Lienar Model}
 \bigsection{Probability Theory}
 \begin{definition}
-    \textbf{Distribution Function (F)}: A function \( F: \mathbb{R} \rightarrow [0,1] \) that:
-    \begin{enumerate}
-        \item Is non-decreasing.
-        \item Is right-continuous.
-        \item Limits to 0 as \( x \rightarrow -\infty \) and 1 as \( x \rightarrow \infty \).
-    \end{enumerate}
-    
-    \textbf{Random Variable (X)}: A measurable function \( X: \Omega \rightarrow \mathbb{R} \) where:
-    \begin{enumerate}
-        \item \( \Omega \) is a sample space equipped with a probability measure.
-        \item \( \mathbb{R} \) is the real line equipped with the Lebesgue measure.
-    \end{enumerate}
-    
-    \textbf{Probability Measure (P)}: A measure defined on a sample space \( \Omega \) whose total measure is 1.
-    
-    \textbf{Distribution (D)}: Given a random variable \( X \), its distribution is the measure induced by \( X \) on \( \mathbb{R} \).
-    
-    \textbf{Density Function (f)}: For a random variable \( X \), its density function \( f \) is any measurable function that satisfies:
-    \[ \Pr(X \in A) = \int_A f \, d\mu \]
-    for every measurable set \( A \subset \mathbb{R} \), where \( \mu \) is the Lebesgue measure.
-    \end{definition}
-    
-There are several theorems/properties that look trivial but are not really trivial.
+\textbf{Distribution Function (F)}: A function \( F: \mathbb{R} \rightarrow [0,1] \) that:
+\begin{enumerate}
+\item Is non-decreasing.
+\item Is right-continuous.
+\item Limits to 0 as \( x \rightarrow -\infty \) and 1 as \( x \rightarrow \infty \).
+\end{enumerate}
+
+\textbf{Random Variable (X)}: A measurable function \( X: \Omega \rightarrow \mathbb{R} \) where:
+\begin{enumerate}
+\item \( \Omega \) is a sample space equipped with a probability measure.
+\item \( \mathbb{R} \) is the real line equipped with the Lebesgue measure.
+\end{enumerate}
+
+\textbf{Probability Measure (P)}: A measure defined on a sample space \( \Omega \) whose total measure is 1.
+
+\textbf{Distribution (D)}: Given a random variable \( X \), its distribution is the measure induced by \( X \) on \( \mathbb{R} \).
+
+\textbf{Density Function (f)}: For a random variable \( X \), its density function \( f \) is any measurable function that satisfies:
+\[ \Pr(X \in A) = \int_A f \, d\mu \]
+for every measurable set \( A \subset \mathbb{R} \), where \( \mu \) is the Lebesgue measure.
+\end{definition}
+
+Some theorems and properties may appear simple at first glance, but upon closer examination, they are actually quite complex.
 \begin{itemize}
-\item The Skorokhod Representation Theorem 
-    states that for every CDF, there exists a canonical probability space and a random variable on that space with the given CDF.
+\item The Skorokhod Representation Theorem states that for every CDF, there 
+exists a canonical probability space and a random variable on that space with 
+the given CDF.
+\begin{itemize}
+\item You can consider either $\sup\{x\in \mathbb{R}:F(x)\leq w\}$ or $\sup\{x\in\mathbb{R}:F(x)<w\}$
+\item This shows that distribution function fully characterizes random dsitribution.
+\end{itemize}
 \item Kolmogorov's Existence threorem states that given finite dimensional sets of distribution, under some conditions, there exists a canonical probability space with random variables whose 
 corresponding distributions coincide with our original distributions.
-\item The existence of distribution function does not guarantee the existence of density function. By Radon-Nikodym, there is a nice characterization when this happens: when distribution (which is a measure defined on $\mathbb{R})$ corresponding to distribution function is absolutely continuous with respect to
- Lebesgue measure.
-\item The existence of distribution function guarantees the existence of distribution, and vice versa.
-\item However, the corresponding distribution always exists (also called generalized function). 
+\item The existence of distribution function does not guarantee the 
+existence of density function. By Radon-Nikodym, there is a nice characterization 
+when this happens: when distribution (which is a measure defined on R) corresponding 
+to distribution function is absolutely continuous with respect to Lebesgue 
+measure; this is a iff condition, that is, absolutely continuous if and only 
+if distribution exists.
+\item The corresponding distribution is connected to the notion of generalized function (linear functional operator).
 \item The previous discussion illustrates that Kolmogorov's existence theorem is more general than Skorokhod Representation theorem.
 \end{itemize}
 Throughout the theory of probability, we usually assume that the probability measure is complete, because of the following proposition.
 \begin{proposition}
-    Let us assume that probability measure is complete. Let $X_t=Y_t$ almost everywhere for every $t\geq 0$.
-    Then there exists $\tilde{Y}_t=Y_t$ almost everywhere for every $t$ such that $X_t(w)=\tilde{Y}_t(w)$ for every $w\in P$ for every $t$ for 
-    measurable set $P$ whose measure is 1.
+Let us assume that probability measure is complete. Let $X_t=Y_t$ almost everywhere for every $t\geq 0$.
+Then there exists $\tilde{Y}_t=Y_t$ almost everywhere for every $t$ such that $X_t(w)=\tilde{Y}_t(w)$ for every $w\in P$ for every $t$ for 
+measurable set $P$ whose measure is 1.
 \end{proposition}
 
-\section*{Covariance, Independence}
+\section{Covariance, Independence}
 \begin{itemize}
 \item Covariance only gives the information about linear relationship between two random variables. It has a limit of capturing non-linear relationship.
 \item Non-linear activation function in deep neural network is an example of such an attempt to leverage non-linearities.
 \item Further, as correlation gives only the linear relationship, zero correlation does not necessarily imply independence.
 \item Independence does not necessarily mean that, in a strict sense, two variables have no "relationsihps." It simply means
- that the information \textbf{about the value of the random variable} does not give any information of \textbf{the value of the other random variable}. For example, we may have $Y=X^2$ where $X=-1$ or $1$.
+that the information \textbf{about the value of the random variable} does not give any information of \textbf{the value of the other random variable}. For example, we may have $Y=X^2$ where $X=-1$ or $1$.
 \item Also note that two random variables may have different mappings while having the same distribution: standard example is $1-X$ and $X\in [0,1]$.
 \end{itemize}
 
-\section*{Distribution function}
+\section{Distribution function}
 \begin{itemize}
 \item If we were to calculate the density function of $X+Y$, we may use convolution.
 \item If we were interested in $\frac XY$, we may use transformation and integrate out. 
@@ -257,16 +268,149 @@ Throughout the theory of probability, we usually assume that the probability mea
 
 \end{itemize}
 
-\section*{Convergence}
+\section{Convergence}
 
-\section*{Markov Chain}
+\section{Markov Chain}
+\begin{fact}
+The reverse of Markov chain is also Markov chain.
+\end{fact}
+\begin{proof}
+We want to show
+\[
+P(T_k | T_{k+1}, \ldots, T_N) = P(T_k | T_{k+1})
+\]
+This is equivalent to
+\[
+P(T_{k+2}, \ldots, T_N | T_k, T_{k+1}) = P(T_{k+2}, \ldots, T_N | T_{k+1})
+\]
 
-\section*{Martingale}
+Well, it holds because
+\[
+\begin{aligned}
+LHS &= P(T_{k+2} | T_k, T_{k+1}) \times P(T_{k+3} | T_k, T_{k+1}, T_{k+2}) \times \cdots \times P(T_N | T_k, \ldots, T_{N-1}) \\
+RHS &= P(T_{k+2} | T_{k+1}) \times P(T_{k+3} | T_{k+1}, T_{k+2}) \times \cdots \times P(T_N | T_{k+1}, \ldots, T_{N-1})
+\end{aligned}
+\]
+\end{proof}
 
-\section*{Brownian Motion}
+by the following fact. 
 
-\section*{Relationship with PDE}
 
-\section*{Relationship with Complex Analysis}
+\begin{fact}
+Markov Chain \( X \) satisfies \( P(X_k | X_{k-1}, \ldots, X_0) = P(X_k | X_{k-1}) \) = \( P(X_k | X_{k-1}, \text{anything from } X_{k-2} \text{ to } X_0) \)
+\end{fact}
 
+\begin{proof}
+For convenience, denote \( P(X_k | X_{k-1}, \text{anything from } X_{k-2} \text{ to } X_0) \) by \( P(X_k | X_{k-1}, \ldots) \). We have two facts...
+\begin{enumerate}
+\item \( P(X_k | X_{k-1}) \) is \( \sigma(X_{k-1}, \ldots) \)-measurable.
+\item 
+\[
+\int_A 1_{X_k = s} = \int_A P(X_k | X_{k-1}, \ldots, X_0) = \int_A P(X_k | X_{k-1}) \quad \forall A \in \sigma(X_{k-1}, \ldots)
+\]
+\end{enumerate}
+This shows that \( P(X_k | X_{k-1}) = P(X_k | X_{k-1}, \ldots) \).
+\end{proof}
+
+\begin{theorem}[Good Markov Property]
+For any given \( N \in \mathbb{N} \) and \( x \in S \), and conditioned on the event \( \{X_N = x\} \), the sequence of random variables \( \{X_N, X_{N+1}\} \) is a Markov Chain and is independent of \( X_0, \ldots, X_{N-1} \).
+\end{theorem}
+
+\begin{theorem}[Strong Markov Property]
+Let \( T \) be a stopping time. Then, conditional on the event \( \{T < \infty\} \) and \( \{X_T = x\} \) and for any \( x \in S \) such that \( P(\{T < \infty\} \cap \{X_T = x\}) > 0 \), the random sequence \( \hat{X} = \{X_{T+n}\}_{n \geq 0} \), defined by \( X_{T+n} \) for each \( n \in \mathbb{N}_0 \), is a Markov Chain with transition probability matrix \( P \) and initial distribution \( \delta_x \).
+
+Furthermore, the random sequences \( T \) and \( \{X_{T+n}\}_{n \geq 0} \), are then conditionally independent, given the event \( \{T < \infty\} \) and \( \{X_T = x\} \).
+\end{theorem}
+\begin{itemize}
+\item The event \( \{T < \infty\} \cap \{X_T = x\} \) represents the event that the stopping time is finite and the process is in state \( x \) at this time.
+
+\item Conditional independence given the above event means that once we know two things - first, that the stopping time \( T \) is finite, and second, that the process is in state \( x \) in this stopping time - then the sequence of states after stopping time \( T \) does not depend on the sequence of states up to the stopping time \( T \).
+\end{itemize}
+
+\section{Martingale}
+\begin{definition}
+A sequence \( Y_i, i = 1, 2, 3, \ldots \) is 
+said to be a martingale with respect to the filtration \( \mathcal{F} \) if \( \forall n \),
+\end{definition}
+\begin{itemize}
+\item \( E(|Y_n|) < \infty \) and \( E(Y_{n+1} | \mathcal{F}_n) = Y_n \)
+
+\item This is a fair game. It says that expected future value given all the information up to now doesn't give any edge and should be equal to the present value.
+
+\item In this context, we want submartingale, where we have \( E(Y_{n+1} | \mathcal{F}_n) = X_n \)
+\end{itemize}
+
+\begin{theorem}(Option Sampling Theorem)
+Suppose \( T \) is a stopping time and \( M_n \) is a martingale with respect to \( \{\mathcal{F}_n\} \). Then \( Y_n = M_{n \land T} \) is a martingale. In particular, for each \( n \),
+
+\[
+E(M_{n \land T}) = E(M_0).
+\]
+
+If \( T \) is bounded, that is, if there exists \( k < \infty \) such that \( P(T \leq k) = 1 \), then
+
+\[
+E(M_T) = E(M_0)
+\]
+\end{theorem}
+
+\begin{itemize}
+\item This says that expected value of the martingale at the stopping time is the same as its initial value, where you might be tempted to think you can choose an advantageous time to stop betting or investing to make a profit.
+\end{itemize}
+
+\section{Brownian Motion}
+\begin{definition}
+It is a stochastic process with
+\begin{enumerate}
+\item \( B_0 = 0 \),
+\item \( B_t - B_s \) is same as \( B_{t-s} \) (stationary),
+\item for each \( s \), \( \{B_{t+s} - B_s, t \geq 0\} \) is independent of \( \{B_r, r \leq s\} \),
+\item and \( t \mapsto B_t \) is a continuous function of \( t \) almost surely.
+\end{enumerate}
+\end{definition}
+\begin{itemize}
+\item (check) We can show that for every \( s < t \), we have \( B_t - B_s \sim N(m(t - s), \sigma^2(t - s)) \)
+\item When \( m = 0 \) and \( \sigma = 1 \), we call it Standard Brownian Motion.
+\end{itemize}
+\subsection{Two constructions}
+
+\begin{enumerate}
+\item First construction
+\begin{itemize}
+\item First, we use Daniel-Kolmogorov theorem to get the following.
+\begin{fact}
+There is a probability measure \( P \) on \( (\mathbb{R}_{[0,\infty)}, B(\mathbb{R}_{[0,\infty)}) \), under which \( X_t(w) = w(t) \) ( \( w \) is a path) has stationary, independent increments. Further, \( X_t - X_s \) is normal with mean zero and variance \( t - s \).
+\end{fact} 
+\item Now, we want to say that \( P(C([0,\infty))) = 1 \). The problem is, \( C([0,\infty)) \) is not even measurable.
+\item To mitigate this, one might need some theorem extending to continuity.
+\end{itemize}
+
+\item Second construction
+\begin{itemize}
+\item We can do like this.
+\item Define on Dyadic rationals
+\item Prove that \( B_t \) is uniformly continuous on the dyadic rationals with probability one.
+\item Extend \( B_t \) to \( t \) in \( [0, 1] \) by continuity.
+\item Check that this works.
+  \end{itemize}
+\end{enumerate}
+
+\section{Relationship with PDE}
+
+\section{Relationship with Complex Analysis}
+
+\section{Misecelleneous}
+
+\begin{definition}
+A sequence of random variables \( (X_1, \ldots, X_n) \) has a joint normal distribution if
+\[
+X_j = m_j + a_{j1}Z_1 + a_{j2}Z_2 + \ldots + a_{jm}Z_m
+\]
+where \( Z_i \sim N(0, 1) \), i.i.d.
+\end{definition}
+\begin{itemize}
+\item Clearly, \( E(X_j) = m_j \). Assume mean zero. Then we can express \( X = AZ \) where \( A \) is an \( n \times m \) matrix with entries \( a_{jk} \). Each \( X_j \) is a normal with mean zero and variance \( E(X_j^2) = a_{j1}^2 + \ldots + a_{jm}^2 \).
+\item Further, covariance is given by \( \text{Cov}(X_j, X_k) = E(X_jX_k) = \sum_{l=1}^{m} a_{jl}a_{kl} \).
+\item Letting \( \Gamma = AA^T \), we get \( \Gamma_{jk} = E(X_jX_k) \), and this is called covariance matrix.
+\end{itemize}
 \end{document}
