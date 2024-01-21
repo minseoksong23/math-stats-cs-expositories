@@ -189,9 +189,19 @@ $d[u]+1\leq\text{ shortest length from s to v}$ by our construction.
 \item The key of this proof is to identify the point where $u$ is just processed. This makes the proof
 rather precise.
 \item Partition into layers... in this case there will be no ``jump'' to the figure.
-
+\item \textbf{DFS} can be used for finding the number of connected components, cyclicity of undirected graph(using parent information), etc
+\item Can also discuss discovery time and finishing time and their properties (such as being only nested or disjoint).
+\item We can talk about the structure of the tree: for instance for undirected graphs, there shouldn't be any cross edges.
+\item We needed to implement stack/queue, and in python, we can just append an element to the array and use the pop method... the operation will take the usual O(1) due to dynamic array in python.
+\item DFS can be used to find 1) DAG(directed acyclic graphs iff topological sort) and 2) SCC.
+\item SCC: we do DFS on some s and then do DFS's again in the reverse order of finishing time. The key for the proof is to use
+the tree structure of DFS.
+\item If there isn't any back edge on DFS, that means the graph is acyclic
 \end{itemize}
-
+\subsection{Dijkstra's algorithm}
+\begin{itemize}
+\item The algorithm is based on $d(v) = \min\{d(u)+w(u,v)\mid \text{ all edges (u,v) }\}$
+\end{itemize}
 \bigsection{Miscelleneous}
 \section*{Spectral clustering}
 \begin{definition}

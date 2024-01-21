@@ -346,6 +346,11 @@ $$
   $ or $L=\begin{pmatrix}
     0 & 0 \\ \sin\theta & \cos\theta
   \end{pmatrix}$
+\item We could've gotten an algorithm to find $F$ with $A=FF^T$, that is (from lec13 note by ), 
+$$
+f_{kk}==(a_{kk}-\sum^{k-1}_{j=1}f^2_{kj})^{1/2}, f_{ik}=\frac{a_{ik}-\sum^{k-1}_{j=1}f_{kj}f_{ij}}{f_{kk}},i=k+1,\dots,n
+$$
+\item The positiveness of the term inside comes from positive definiteness of the original matrix (could be done via induction).
 \end{itemize}
 \subsection{QR decomposition}
 \begin{itemize}

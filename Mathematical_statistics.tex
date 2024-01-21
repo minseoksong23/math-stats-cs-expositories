@@ -1,0 +1,287 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage{graphicx, url}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{titlesec}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\graphicspath{ {./images/} }
+\usetikzlibrary{shapes}
+\usepgfplotslibrary{polar}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\pgfplotsset{every axis/.append style={
+                    axis x line=middle,    % put the x axis in the middle
+                    axis y line=middle,    % put the y axis in the middle
+                    axis line style={<->,color=blue}, % arrows on the axis
+                    xlabel={$},          % default put x on x-axis
+                    ylabel={$},          % default put y on y-axis
+            }}
+\newcommand{\numpy}{{\tt numpy}}    % tt font for numpy
+\usepackage[utf8]{inputenc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{example}{Example}
+\newtheorem{fact}{Fact}
+\newtheorem{remark}[example]{Remark}
+
+\newcommand{\bigsection}[1]{
+  \titleformat*{\section}{\centering\LARGE\bfseries}
+  \section*{#1}
+  \titleformat*{\section}{\large\bfseries} % Reset to the original format
+}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\title{Mathematical statistics}
+\author{MinSeok Song}
+\date{}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\maketitle
+\bigsection{Mathematical Statistics}
+\section{Sufficient statistic}
+\begin{definition}
+Statistic T is called sufficient if $X\mid T$ does not depend on $\theta$.
+\end{definition}
+\begin{itemize}
+\item ($\ast$)We need \textbf{measure theoretic} definition of sufficiency. What 
+exactly is meant that samples from $X\mid T$ follow the same distribution as $X$?
+\item ($\ast$)What I am getting at is that $P(X\in A)=P(X\in A\mid \sigma(w:T(X(w))\in T(A)))(w)$ for $w\in \{w:T(X(w))\in T(A)\}$. To be continued (check!)
+\item The setting here is that we are trying to infer $\theta$ based on data $X$. Bayesian 
+definition would be phrased as $X\mid T \perp \theta$
+\item The intuition here is that having $X$ given $T$ does not give further information about $\theta$. 
+Just by definition, $X$ ($n$ samples) has the same distribution as a sample from $X|T$ (also $n$ samples).
+\begin{example}
+\item For example $X|T$ has a distribution depending on $T(X)$ such as $$N(1^T \bar X, \begin{pmatrix}
+1-1/n & -1/n & \dots \\
+-1/n & 1-1/n & \dots \\
+\dots & & 1-1/n
+\end{pmatrix})$$ and if we sample $\tilde X_i$'s from this distribution, it does follow $N(\theta,1)$ (the conditional distribution 
+follows that above distribution).
+\item Another example would be sum for Bernoulli, and maximum value for uniform distribution. 
+\item By the way, maximum and minimum of samples from uniform distribution are both sufficient, illustrating that 1d
+sufficient statistic is not necessarily minimal. 
+\end{example}
+\item Any one to one function of minimal sufficient statistic is also minimal sufficient statistic. For example, $(T(x),T(x))$ would do.
+\item Lehmann-Scheffe theorem establishes the relationship between unbiasedness and sufficiency of statistic.
+\end{itemize}
+\begin{theorem}(factorization theorem)
+Sufficient statistic $T$ satisfies $P(x)=f_\theta(T(x))g(x)$, that is, $\theta$ depends only through $T(x)$.
+\end{theorem}
+\begin{definition}
+A sufficient statistic $T$ is called minimal if any other sufficient statistic $M$ is a function of $T$.
+\end{definition}
+\begin{lemma}
+Suppose $H_0\subset H$. Suppose $S$ is minimal sufficient for $P_\theta,\theta\in H_0$ and sufficient for $P_\theta,\theta\in H$. Then 
+it is minimal sufficient for $P_\theta,\theta\in H$.
+\end{lemma} 
+\begin{itemize}
+\item This is because any sufficient statistic in a larger parameter space is 
+sufficient in a smaller set  of parameter space by definition.
+\end{itemize}
+\begin{theorem}
+For $P_\theta:\theta\in\{\theta_1,\dots,\theta_d\}$, $T(x)=(\frac{P_{\theta_1(x)}}{P_{\theta_0}(x)}, 
+\frac{P_{\theta_2(x)}}{P_{\theta_0}(x)},\dots \frac{P_{\theta_d(x)}}{P_{\theta_0}(x)})$ is a minimal sufficient statistic.
+\end{theorem}
+\begin{proof}
+Sufficiency by definition. Minimality due to factorization theorem.
+\end{proof}
+\begin{itemize}
+\item 
+\end{itemize}
+
+
+\bigsection{DS procedure}
+The dichotomy of Bayesian and Frequentist approach is mostly a matter of division based on foundational philosophical differences, and in some situation is not necessarily natural; each instance can be formally simply seen as a choice of analysis. The dichotomy has mainly developed based on two philosophical school of thoughts:
+ subjective belief (via prior distribution) vs. long-run frequency (via sampling distribution).
+\begin{enumerate}
+\item Frequentist
+\begin{itemize}
+\item They avoid making probabilistic claims about model parameters and hypothesss. Instead, they describe the behavior of statistics and procedures over many hypothetical repeated samples.
+\item They use Statistics derived from data, and use deterministic approach for inference, with methods like hypothesis testing and confidence intervals to draw conclusions about population parameters based on sample data.
+\item examples: T-test, linear regression, etc
+\end{itemize}
+\item Bayesian
+\begin{itemize}
+\item They assign prior beliefs (distribution function) on parameters of model.
+\item They use probabilistic argument on specific hypothesis or parameter values.
+\item examples: MCMC, Bayesian hierarchical modeling, etc
+\end{itemize}
+\end{enumerate}
+\section{Data Science Procedure}[list of topics that will be discussed]
+\begin{enumerate}
+\item Preparation of data
+\begin{itemize}
+\item handling missing data (imputation, etc)
+\item transformation
+\item Box-Cox transformation
+\item Outliers
+\end{itemize}
+
+\item Interpret descriptive statistics about data
+\begin{itemize}
+\item plots
+\item t-distribution
+\item F-distribution
+\end{itemize}
+
+\item Modeling (parametric, nonparametric)
+\begin{itemize}
+\item ANOVA
+\item Ensemble methods
+\item Boosting
+\item AIC-BIC
+\item Regularization
+\end{itemize}
+
+\item Predict based on model
+\begin{itemize}
+\item Confidence/Prediction intervals
+\item Real-time prediction
+\end{itemize}
+
+\item Inference on statistics
+\begin{itemize}
+\item Hypothesis testing
+\item p-value
+\item Type I/II error
+\item Causal inference
+\end{itemize}
+
+\item Evaluation of models
+\begin{itemize}
+\item Cross-validation
+\end{itemize}
+
+\item Communication of models
+\end{enumerate}
+
+\subsection{Types of Missing Data}
+\begin{enumerate}
+\item MCAR
+\item MAR
+\item MNAR
+\end{enumerate}
+
+
+\section{Outliers}
+\section{Inference on statistics}
+\section{p-value}
+\begin{definition}
+Given some hypothesis, the p-value is the probability of obtaining test results at least as extreme as 
+the result actually observed, under the assumption that the null hypothesis is correct.
+\end{definition}
+\begin{itemize}
+\item If p-value is less than significance level, we reject the null hypothesis. Significance 
+level is a threshold we set to decide when we have enough evidence to reject the null hypothesis in favor of the alternative hypothesis.
+\item In statistics, we do not quite "prove" that the hypothesis is true. We can only reject the false statements or assertions (the theory of falsification, proposed by Karl Popper). 
+\end{itemize}
+
+\section{t-distribution}
+\begin{definition}
+t-distribution is defined as $\frac Z{\sqrt{\frac Vk}}$ where $Z \perp V$, $Z\sim N(0,1)$, and $V\sim \chi_k^2$.
+\end{definition}
+\begin{itemize}
+\item The t-distribution has the thicker tails than the normal distribution.
+\item Note that the $\chi_k^2$ distribution has mean $k$ and variance $2k$. Hence as $k$ gets larger the t-distribution 
+looks like standard normal distribution due to CLT. 
+\item In multiple regression setting, $\frac{\frac{\hat\beta_1-\beta_1}{\frac \sigma{\sqrt{\sum_i(X_i-\bar X)^2}}}}
+{\sqrt{(n-2)\cdot\frac{\hat \sigma^2}{\sigma^2}/(n-2)}}\sim t_{n-2}$ under normal assumption of residual.
+\end{itemize}
+
+\section{Chi-squared distribution}
+\begin{itemize}
+\item It is possible to have $f(X)$ and $g(X)$ be independent. The key example concerns chi-distribution: Say $\theta$ is uniformly distributed in $[0,2\pi]$. 
+Let us say $R^2$ follows $chi$-squared distribution with degree 2: this acts like a distance square in the 2d space. Then $X= r\cos(\theta)$ and $Y=r\sin(\theta)$ are independent.
+\item The definition of chi-square looks contrived, in particular compared to normal distribution, but we use it a lot in the context of sum of squares.
+\item Under moment assumption, it's approximately true for large $n$ via CLT.
+\item Under moment assumption, it's approximately true for large $n$ via CLT.
+\end{itemize}
+
+
+\section{Prediction interval, Confidence interval}
+\begin{itemize}
+\item In the context of linear regression, a \textbf{confidence interval} provides a range of values within which we expect the true regression coefficient (e.g., $ \beta_0 $ or $ \beta_1 $) to lie with a certain level of confidence. This reflects our uncertainty about the 
+value of the coefficient based on the data we have observed.
+\item On the other hand, a \textbf{prediction interval} provides a range of values within which a new observation $ y $ (given a particular $ x $) is expected to fall with a certain level of confidence.
+We have $y=\beta_0+\beta_1 x+\epsilon$. Note the additional uncertainty introduced by the random error $\epsilon$.
+\end{itemize}
+
+\subsection{Fisher information}
+\begin{definition}
+Fisher information is defined by $\mathcal{I}(\theta)=E[(\frac \partial{\partial\theta}\log f(X;\theta))^2|\theta]$ for appropriately regular $f$.
+\end{definition}
+
+\begin{itemize}
+\item Note that $E[\frac{\partial}{\partial\theta}\log f(X;\theta)|\theta]=0$.
+\item Think of this as how much (the logarithm of) likelihood varies in the vicinity of $\theta$.
+\item Large variation of likelihood we have more "information." (for example, if a deviation causes a significant drop in likelihood, 
+it means that the data is most probable under the original $\theta$ value.)
+\end{itemize}
+
+\begin{theorem} [Cramer-Rao bound]
+Say $\hat\theta(X)$ is an unbiased estimator. We have $Var(\hat\theta)\geq \frac 1{\mathcal{I}(\theta)}$.
+\end{theorem}
+
+\begin{itemize}
+\item This says that as the fisher information gets larger, we have better precision.
+\item There is a similar result for biased estimator.
+\end{itemize}
+\bigsection{Linear Model}
+\begin{itemize}
+\item Two assumptions: normality($Y_i\sim N(\beta_0 + \beta_1X_i,\sigma^2)$) and moment assumption.
+\begin{fact}
+For Normal distribution, pair-wise independence implies mutual independence.
+\end{fact}
+\begin{proof}
+It comes from the fact that the mutual independence holds if and only if density function factorises.
+In particular, multivariate normal distribution with diagonal matrix covariate satisfies this property.
+\end{proof}
+\item For 1d case, we could calculate $\hat\beta$ based on $\partial/\partial \beta (RSS)$...
+\item After computing $\beta_0$ and $\beta_1$, we can also compute their respective variance and covariance between them.
+I need to use the fact that $\bar Y$ and $\hat\beta_1$, which could also be easily calculated.
+\item We could further define $\hat \epsilon$, and unbiased estimator $\hat\sigma$. Showing that it is unbiased and is independent to $\hat\beta_0$ and $\hat\beta_1$ is more involved (need to check).
+\item Knowing that $\frac{\hat\beta_1-\beta_1}{\sigma/\sqrt{\sum_i(X_i-\bar X)^2}}\sim N(0,1)\perp\text{ (because $\hat\beta_1\perp \hat\sigma^2$) } (n-2)\cdot\frac{\hat\sigma^2}{\sigma^2}\sim\chi^2_{n-2}$
+we can do some more analysis involving confidence interval of predictive value and mean value at a given point.
+\item Some \textbf{intuition} about why the variance of $\beta$ is inversely proportional to dispersion: well, as the data gets concentrated, the prediction is
+rather \textbf{unreliable}. 
+\item The reason we used t-distribution is to cancel out the \textbf{unknown value} $\sigma$.
+\begin{itemize}
+\item RSS = portion that is not explained by the model
+\item TSS = total sum of squares = $\lVert Y - \bar Y 1_n\rVert^2$. Note that $Y - \bar Y 1_n\in span(X)$
+\item ESS = explained sum of squares = $\lVert \hat Y - \bar Y 1_n\rVert^2$
+\end{itemize}
+\item RSS + ESS = TSS. The role of $\bar y$ is like the ``standardized line." Refer to \href{https://stats.stackexchange.com/questions/234850/intuition-behind-regression-sum-of-squares}{here}.
+\item R square is ESS/TSS.
+\item We would use F test... F statistic is given by $F=\frac{\lVert U_2^T Y\rVert^2/k}{\lVert U_3^T Y\rVert^2/(n-p)}=\frac{RSS_\text{partial model}-RSS_\text{full model}}{RSS_\text{full model}/(n-p)}$
+\item We want F to be as small as possible for the hypothesis $\beta=0$ to be true, to accept partial model. In other words, $RSS_\text{partial model}$ tends to be larger if $\beta_S\neq 0$.
+\end{itemize}
+\maketitle
+\begin{sloppypar}
+
+\end{sloppypar}
+\end{document}
