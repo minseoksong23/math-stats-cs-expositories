@@ -63,7 +63,7 @@
 \begin{document}
 \maketitle
 \bigsection{Mathematical Statistics}
-\section{Sufficient statistic}
+\section{Sufficiency and Exponential family}
 \begin{definition}
 Statistic T is called sufficient if $X\mid T$ does not depend on $\theta$.
 \end{definition}
@@ -71,6 +71,8 @@ Statistic T is called sufficient if $X\mid T$ does not depend on $\theta$.
 \item ($\ast$)We need \textbf{measure theoretic} definition of sufficiency. What 
 exactly is meant that samples from $X\mid T$ follow the same distribution as $X$?
 \item ($\ast$)What I am getting at is that $P(X\in A)=P(X\in A\mid \sigma(w:T(X(w))\in T(A)))(w)$ for $w\in \{w:T(X(w))\in T(A)\}$. To be continued (check!)
+\item Well, I think it is a direct consequence of $P(X=x)=\int P(X=x\mid T(x)=t)P(T(x)=t)dt$. So it indeed follows from definition. 
+\item Here, $T$ being sufficient is irrelevant. However, we'll easily sample from $P(X=x\mid T(x)=t)$ because the distribution $X\mid T$ doesn't depend on $\theta$.
 \item The setting here is that we are trying to infer $\theta$ based on data $X$. Bayesian 
 definition would be phrased as $X\mid T \perp \theta$
 \item The intuition here is that having $X$ given $T$ does not give further information about $\theta$. 
@@ -110,9 +112,146 @@ For $P_\theta:\theta\in\{\theta_1,\dots,\theta_d\}$, $T(x)=(\frac{P_{\theta_1(x)
 \begin{proof}
 Sufficiency by definition. Minimality due to factorization theorem.
 \end{proof}
+\begin{definition}
+\textbf{Exponential family} is of the form $p(x\mid \theta)=\exp(\sum\limits^d_{j=1}\eta_j(\theta)T_j(x)-B(\theta))h(x)$. 
+\end{definition}
 \begin{itemize}
-\item 
+\item We can see that $B(\theta)=\log\int e^{\sum^d_{j=1}\eta_j(\theta)T_j(x)}h(x)d\mu(x)$, which can be viewed as a function of $\eta$.
+\item Canonical form is of the form $p(x\mid \eta)=\exp(\sum^d_{j=1}\eta_jT_j(x)-A(\eta))h(x)$.
+ We can see that $A(\eta)$ is convex function and parameter space is convex set.
+\item Using natural parameter and normalizing constant, we can easily get expected value and variance of $T(X)$, i.e. 
+$E_\theta[T(x)]=J^{-1}\nabla B$.
 \end{itemize}
+\begin{theorem}(Rau-Blackwell)
+Assume $L(\hat\theta,\theta)$ is convex in $\hat\theta$ for any $\hat\theta$ and any sufficient statistic $T$. Define
+$\hat\theta=E_\theta(\hat\theta\mid T)$. Then $R(\hat\theta,\theta)\leq R(\hat\theta,\theta)$.
+\end{theorem}
+\begin{proof}
+$L(\hat\theta,\theta)=L(E_\theta(\hat\theta\mid T),\theta)\leq E_\theta(L(\hat\theta,\theta)\mid T)$ by Jensen inequality. Take expected value on both sides and we get the result.
+\end{proof}
+\begin{itemize}
+\item I don't think we used sufficiency in the proof?
+\end{itemize}
+\begin{definition}
+Statistic $T$ is called ancillary if it doesn't depend on $\theta$. If the expected value doesn't depend on $\theta$, it's called first order ancillary.
+\end{definition}
+\begin{definition}
+$T(X)$ is complete iff $E_\theta(f(T(x)))=0,\forall\theta\in H$ imples $f(T(x))=0$ almost surely. 
+\end{definition}
+\begin{itemize}
+\item Ancillary statistic is something that is not informative about $\theta$.
+\item In words, completeness means that if the function of statistic is first-order ancillary, it should better be constant.
+\item So, since $T$ already has much information about $\theta$, if $f(T)$ has hint of having no information about $\theta$ (first order ancillary), it surely doesn't 
+have information about $f(T)$.
+\item Few ways to prove completeness: 
+\begin{enumerate}
+\item use the idea of MGF
+\item use measure theory result: if the integral on measurable set is same then the integrand is same almost everywhere,
+\item For full rank exponential family, $T$ is complete. 
+\end{enumerate}
+\item In order to complete non-completeness, one uses counter-exmple of non-zero $f$. One uses symmetry; for example 
+one may use $\sum_{i=1}^n x_{(i)}$-median.
+\end{itemize}
+\begin{theorem}(Bahador)
+If T is sufficient and complete, then T is minimal sufficient.
+\end{theorem}
+\begin{itemize}
+\item T may well be minimal sufficient but not complete. 
+\end{itemize}
+\begin{theorem}(Basu)
+If T is sufficient and complete, and if A is ancillary, then T and A are independent.
+\end{theorem}
+\begin{itemize}
+\item T is like a perfect summary of the parameter, while A doesn't contain information on $\theta$ so it makes sense
+that T and A are independent of each other.
+\end{itemize}
+\section{Decision Theory}
+\begin{definition}
+The risk is defined by $E_\theta(l(\hat\theta(X),\theta))$. It is a function of $\theta$.
+\end{definition}
+\begin{itemize}
+\item If we have a prior on $\theta$, we can further define Bayes estimator, that is, 
+$$
+\arg\min_{\hat\theta(X)\in H}\int R(\hat\theta(X),\theta)\pi(\theta)d\theta
+$$
+\item Minimax is defined as $\arg\min_{\hat\theta(X)\in H}\sup_{\theta\in H}R(\hat\theta(X),\theta)$
+\item Note that this is a function of $X$, that is, statistic. 
+\end{itemize}
+\begin{fact}
+$\hat\theta_\pi(x)=\arg\min_a\int L(a,\theta)\pi(\theta\mid x)d\theta$ is Bayes.
+\end{fact}
+\begin{proof}
+Fubini theorem.
+\end{proof}
+\begin{fact}
+For a squared loss, Bayes estimator is given by $E(\theta\mid X)$. This is essentially due to bias-variance trade-off!
+\end{fact}
+\begin{fact}
+$\arg\min_a E(\lvert X-a\rvert)=\text{median of X}$ where median is defined as $P(X\leq m)\geq 1/2$ and $P(X\geq m)\geq 1/2$.
+\end{fact}
+\begin{fact}
+The median is given by a closed interval $[m_0,m_1]$.
+\end{fact}
+\begin{itemize}
+\item The inequality is important, because we are excluding the edge case where for example $P(X=0)=2/3$ and $P(X=1)=1/3$.
+\item The above fact is due to the following string of (in)equality, given $m_1<c$.
+$$
+E(\lvert X-c\rvert)-E(\lvert X-m\rvert)=(c-m)[P(X\leq m)-P(X > m)]+2\int_{m<x<c} (c-x)dP(x)\geq 0
+$$
+\item As you can see the right hand side is some kind of deviation term, and the left hand side used the definition of median.
+\item $\arg\min_{\hat\theta(X)\in H} E_\theta(\lvert \hat\theta(X)-\theta\rvert)$ is given by $\hat\theta_\pi(x)=\arg\min_a\int \lvert a-\theta\lvert \pi(\theta\mid x)$, according to the previous argument, posterior median.
+\end{itemize}
+\begin{theorem}
+If for some $\pi$, $\hat\theta$ satisfies $\sup_{\theta\in H}R(\hat\theta,\theta)=\inf_{\hat\theta}\int R(\tilde \theta,\theta)\pi(\theta)d\theta$, 
+then $\hat\theta$ is minimax.
+\end{theorem}
+\begin{proof}
+$\forall\tilde\theta$, 
+\begin{align*}
+\sup_{\theta\in H}R(\tilde\theta,\theta)&\geq\int R(\tilde\theta,\theta)\pi(\theta)d\theta\\
+&\geq \inf_{\tilde\theta}\int R(\tilde\theta,\theta)\pi(\theta)d\theta\\
+&=\sup_{\theta\in H}R(\hat\theta,\theta)
+\end{align*}
+\end{proof}
+\begin{itemize}
+\item This says that if worst possible risk for an estimator $\hat\theta$ is best possible average risk, then $\hat\theta$ is performing as well as possible, even in the worst-case scenario.
+\end{itemize}
+\begin{corollary}
+If $\hat\theta=\hat\theta_\pi$ for some $\pi$ and $R(\hat\theta_\pi,\theta)$ is constant over $\theta\in H$ then $\hat\theta$ is minimax.
+\end{corollary}
+\begin{proof}
+The first inequality becomes equality due to constant assumption, and the second inequality 
+becomes equality due to $\hat\theta$ being Bayes.
+\end{proof}
+\begin{fact}
+The minimax estimator for squared loss is unbiased.
+\end{fact}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \bigsection{DS procedure}
@@ -169,6 +308,10 @@ The dichotomy of Bayesian and Frequentist approach is mostly a matter of divisio
 \item Hypothesis testing
 \item p-value
 \item Type I/II error
+\begin{enumerate}
+\item Type I: reject null when true: for example, it's like wrongly assuming that the medication has an effect, when it doesn't.
+\item Type II: fail to reject null when false: for example, it's like failing to deciding that the medication has an effect, when it has an effect. 
+\end{enumerate}
 \item Causal inference
 \end{itemize}
 
@@ -251,6 +394,87 @@ Say $\hat\theta(X)$ is an unbiased estimator. We have $Var(\hat\theta)\geq \frac
 \item This says that as the fisher information gets larger, we have better precision.
 \item There is a similar result for biased estimator.
 \end{itemize}
+
+\section{Consistency}
+\begin{definition}
+We say $\hat\theta$ is consistent to $\theta$ if $P(\lvert \hat\theta-\theta\rvert<c)\to 1$ as $n\to\infty, \forall c>0$.
+\end{definition}
+\begin{example}
+Say $X_i$ and $Y_i$ are sampled from $N(\mu_i,\sigma^2)$. We can see that MLE $\hat\sigma^2$ is not consistent because of growing
+number of nuisance parameters. Essentially, as we add more groups and calculate $\hat\mu_i$, even if
+we have more data, it doesn't help us get a better estimate of the variance $\sigma^2$ due to ``nuisance parameters" $\mu_i$'s.
+\end{example}
+\begin{itemize}
+\item So how do we deal with it? There are two ways.
+\begin{enumerate}
+\item Integrate out all the nuisance parameters and use MLE on that.
+\item Condition on the minimal sufficient statistic of nuisance parameters and maximize the conditional distribution.
+\end{enumerate} 
+\end{itemize}
+
+\section{Location family}
+\begin{definition}
+It is a family of probability distribution parametrized by a location parameter $\mu$ and a non-negative scale parameter.
+\end{definition}
+\begin{itemize}
+\item The distribution function is of the form $F(\frac{x-a}{b})$.
+\item We can check that $(X_1-X_i)/b$ is ancillary when $X_i's$ are i.i.d. for a known $b$ because $b$ will be cancelled.
+\item Elaboration: say $X\sim F(x)$ and $X=a+bY$. Then $P(X\leq x)=P(a+bY\leq x)=P(Y\leq\frac{x-a}b)=G(\frac{x-a}b)=F(x)$
+\end{itemize}
+
+\section{Uniformly most powerful test(UMP)}
+\begin{definition}
+A test function $\phi(x)$ is UMP of size $\alpha$ if for any other test function $\phi'(x)$ satisfying 
+$$
+\sup_{\theta\in \Theta_0} E(\phi'(X)\lvert \theta)=\alpha'\leq \alpha=\sup_{\theta\in\Theta_0}E(\phi(X)\lvert \theta)
+$$
+we have
+$$
+\forall \theta\in\Theta_1,\quad E(\phi'(X)\lvert \theta)=1-\beta'(\theta)\leq 1-\beta(\theta)=E(\phi(X)\lvert \theta)
+$$
+\end{definition}
+\begin{itemize}
+\item The first term is type I error, and the second term is the power of test function.
+\item It says that UMP test has the highest power among all tests whose type I error is less than or equal to $\alpha$, a maximum type I error for our chosen test function.
+\item The assumption is needed because we can artificially make the test function to have th highest power by rejecting all the time.
+\end{itemize}
+
+\section{unbiasedness of test function}
+\begin{definition}
+Define $\phi(X)=1$ if $X\in R$ and $0$ if $X\in R^c$ where $R$ is a reject region. If a test function $\phi(X)$ satisfies $E_\theta \phi(X)\leq \alpha$ if 
+$\theta\in\Omega_H$ and $E_\theta \phi(X)\geq\alpha$ if $\theta\in\Omega_K$ then it is said to be unbiased.
+\end{definition}
+\begin{itemize}
+\item UMP is unbiased. Think of a test function $\phi=\alpha$.
+\end{itemize}
+
+\section{distributions}
+\subsection{Exponential distribution}
+\begin{itemize}
+\item The distribution function is $F_X(x)=1-e^{-\lambda t},t\geq 0$. $\lambda$ here is like a rate.
+\item When the rate is $\lambda$, we are asking how long do we wait until we first see the bus.
+\item Mathematically, this is like calculating $F(t)=1-\lim_{\Delta t\to 0}(1-\lambda\Delta t)^{\frac t{\Delta t}}=1-e^{-\lambda t}$.
+\item So we have $f(t)=\lambda e^{-\lambda t}$. Mean value is shown to be $\frac 1\lambda$
+\begin{example}
+As an exercise, let us check the distribution of $x_{(1)}$ from $n$ samples.
+We have $P(x_{(1)}\geq t)=P(x_i\geq t,i=1,2,\dots,n)=e^{-\lambda nt}$, so that $P(x_{(1)}\leq t)=1-e^{-\lambda nt}$.
+\end{example}
+\end{itemize}
+\subsection{Poisson distribution}
+\begin{itemize}
+\item It is given by $P(X=k)= \lim\limits_{n\to\infty}\binom{n}{k}(\frac{\lambda}n)^k(1-\frac{\lambda}n)^{n-k}$
+\item So exponential distribution is about time that we first see an event happening with the rate $\lambda$(essentially success probability over unit time), and poisson distribution is about finding out for a fixed time when the 
+rate is $\lambda$, the probability of having $k$ events.
+\end{itemize}
+\subsection{Beta distribution}
+\begin{itemize}
+\item It is given by $\frac 1{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$ where $B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$
+\item It can be conjugate prior with respect to Bernoulli by the following formula:
+$$
+p(\theta\mid x)\propto p^{\sum x_i} (1-p)^{n-\sum x_i} \times p^{\alpha}(1-p)^{n-\alpha}\sim B(\sum x_i + \alpha,\sum (1-x_i)+\beta)
+$$
+\end{itemize}
+
 \bigsection{Linear Model}
 \begin{itemize}
 \item Two assumptions: normality($Y_i\sim N(\beta_0 + \beta_1X_i,\sigma^2)$) and moment assumption.
